@@ -68,7 +68,7 @@ func BenchmarkFindAuthorByID(b *testing.B) {
 	n := int64(10000)
 	authors := make([]*Author, n)
 	for i := range authors {
-		authors[i] = &Author{ID: int64(i), Name: fake.FullName()}
+		authors[i] = &Author{ID: int64(i + 1), Name: fake.FullName()}
 	}
 
 	for _, impl := range impls() {
@@ -80,7 +80,7 @@ func BenchmarkFindAuthorByID(b *testing.B) {
 
 				b.RunParallel(func(pb *testing.PB) {
 					for pb.Next() {
-						impl.FindAuthorByID(rand.Int63n(n))
+						impl.FindAuthorByID(rand.Int63n(n) + 1)
 					}
 				})
 			})
@@ -96,7 +96,7 @@ func BenchmarkFindAuthorByName(b *testing.B) {
 	n := int64(10000)
 	authors := make([]*Author, n)
 	for i := range authors {
-		authors[i] = &Author{ID: int64(i), Name: authorNames[rand.Intn(len(authorNames))]}
+		authors[i] = &Author{ID: int64(i + 1), Name: authorNames[rand.Intn(len(authorNames))]}
 	}
 
 	for _, impl := range impls() {
@@ -118,7 +118,7 @@ func BenchmarkRecentArticles(b *testing.B) {
 	articles := make([]*Article, 10000)
 	for i := range articles {
 		articles[i] = &Article{
-			ID:          int64(i),
+			ID:          int64(i + 1),
 			Title:       fake.Title(),
 			Body:        fake.EmailBody(),
 			PublishedAt: time.Unix(rand.Int63n(time.Now().Unix()), 0),
@@ -152,6 +152,7 @@ func impls() []Implementation {
 		&PGXStdlib{},
 		&UpperDB{},
 		&SQLX{},
+		&Gorm{},
 	}
 	rand.Shuffle(len(impls), func(i, j int) {
 		impls[i], impls[j] = impls[j], impls[i]

@@ -5,12 +5,12 @@ import (
 )
 
 type Author struct {
-	ID   int64  `db:"id"`
+	ID   int64  `db:"id" gorm:"PRIMARY_KEY"`
 	Name string `db:"name"`
 }
 
 type Article struct {
-	ID          int64     `db:"id"`
+	ID          int64     `db:"id" gorm:"PRIMARY_KEY"`
 	Title       string    `db:"title"`
 	Body        string    `db:"body"`
 	PublishedAt time.Time `db:"published_at"`
