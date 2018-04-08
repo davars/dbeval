@@ -1,0 +1,38 @@
+› go test -v -bench=. github.com/davars/dbeval
+=== RUN   TestImplementations
+--- PASS: TestImplementations (3.71s)
+goos: darwin
+goarch: amd64
+pkg: github.com/davars/dbeval
+BenchmarkInsert/*dbeval.PQ/Authors-4         	    1000	   1077104 ns/op	    9907 B/op	     296 allocs/op
+BenchmarkInsert/*dbeval.UpperDB/Authors-4    	    1000	   1390583 ns/op	  101547 B/op	    4777 allocs/op
+BenchmarkInsert/*dbeval.Memory/Authors-4     	  100000	     14900 ns/op	    3086 B/op	      69 allocs/op
+BenchmarkInsert/*dbeval.SQLX/Authors-4       	    2000	    909804 ns/op	   10274 B/op	     279 allocs/op
+BenchmarkInsert/*dbeval.PGXStdlib/Authors-4  	    2000	    839978 ns/op	    6220 B/op	     187 allocs/op
+BenchmarkInsert/*dbeval.PGX/Authors-4        	    2000	    830333 ns/op	    4028 B/op	     130 allocs/op
+BenchmarkInsert/*dbeval.Memory/Articles-4    	    2000	   1481276 ns/op	   96521 B/op	    1498 allocs/op
+BenchmarkInsert/*dbeval.PGXStdlib/Articles-4 	    1000	   1474228 ns/op	  114286 B/op	    1709 allocs/op
+BenchmarkInsert/*dbeval.UpperDB/Articles-4   	    1000	   1696321 ns/op	  235323 B/op	    7250 allocs/op
+BenchmarkInsert/*dbeval.PQ/Articles-4        	    1000	   1448654 ns/op	  122932 B/op	    1772 allocs/op
+BenchmarkInsert/*dbeval.SQLX/Articles-4      	    1000	   1458423 ns/op	  120319 B/op	    1848 allocs/op
+BenchmarkInsert/*dbeval.PGX/Articles-4       	    1000	   1179645 ns/op	  103602 B/op	    1579 allocs/op
+BenchmarkFindAuthorByID/*dbeval.SQLX-4       	   20000	     86726 ns/op	    1787 B/op	      39 allocs/op
+BenchmarkFindAuthorByID/*dbeval.Memory-4     	10000000	       139 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFindAuthorByID/*dbeval.PGX-4        	   20000	     72026 ns/op	     728 B/op	      15 allocs/op
+BenchmarkFindAuthorByID/*dbeval.UpperDB-4    	   10000	    100615 ns/op	    9872 B/op	     448 allocs/op
+BenchmarkFindAuthorByID/*dbeval.PQ-4         	   20000	     80015 ns/op	    1214 B/op	      36 allocs/op
+BenchmarkFindAuthorByID/*dbeval.PGXStdlib-4  	   20000	     91093 ns/op	    1517 B/op	      34 allocs/op
+BenchmarkFindAuthorByName/*dbeval.PGXStdlib-4         	    2000	   1175156 ns/op	  139348 B/op	    4049 allocs/op
+BenchmarkFindAuthorByName/*dbeval.Memory-4            	20000000	        73.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFindAuthorByName/*dbeval.PGX-4               	    2000	    895251 ns/op	  114738 B/op	    2034 allocs/op
+BenchmarkFindAuthorByName/*dbeval.SQLX-4              	    1000	   1326620 ns/op	  139549 B/op	    4053 allocs/op
+BenchmarkFindAuthorByName/*dbeval.UpperDB-4           	    1000	   1473113 ns/op	  170599 B/op	    6457 allocs/op
+BenchmarkFindAuthorByName/*dbeval.PQ-4                	    2000	    973608 ns/op	   97857 B/op	    4043 allocs/op
+BenchmarkRecentArticles/*dbeval.PGX-4                 	     500	   3045133 ns/op	 3362646 B/op	    6440 allocs/op
+BenchmarkRecentArticles/*dbeval.Memory-4              	30000000	        46.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRecentArticles/*dbeval.SQLX-4                	     300	   4134345 ns/op	 3508482 B/op	   14468 allocs/op
+BenchmarkRecentArticles/*dbeval.PQ-4                  	     300	   3768600 ns/op	 3277665 B/op	   17425 allocs/op
+BenchmarkRecentArticles/*dbeval.PGXStdlib-4           	     500	   3434684 ns/op	 3507896 B/op	   14462 allocs/op
+BenchmarkRecentArticles/*dbeval.UpperDB-4             	     300	   4394987 ns/op	 3482770 B/op	   23777 allocs/op
+PASS
+ok  	github.com/davars/dbeval	143.138s
