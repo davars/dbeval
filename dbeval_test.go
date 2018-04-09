@@ -153,6 +153,7 @@ func impls() []Implementation {
 		&UpperDB{},
 		&SQLX{},
 		&Gorm{},
+		&Pop{},
 	}
 	rand.Shuffle(len(impls), func(i, j int) {
 		impls[i], impls[j] = impls[j], impls[i]

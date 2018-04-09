@@ -61,7 +61,7 @@ func (p *SQLX) InsertArticles(as []*Article) {
 	}()
 	check(err)
 	for _, a := range as {
-		_, err = tx.NamedExec("INSERT INTO articles (id, title, body, published_at) VALUES (:id, :title, :body, :published_at)", a)
+		_, err = tx.NamedExec(`INSERT INTO articles (id, title, body, published_at) VALUES (:id, :title, :body, :published_at)`, a)
 		check(err)
 	}
 }

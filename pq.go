@@ -62,7 +62,7 @@ func (p *PQ) InsertArticles(as []*Article) {
 	}()
 	check(err)
 	for _, a := range as {
-		_, err = tx.Exec("INSERT INTO articles (id, title, body, published_at) VALUES ($1, $2, $3, $4)", a.ID, a.Title, a.Body, a.PublishedAt)
+		_, err = tx.Exec(`INSERT INTO articles (id, title, body, published_at) VALUES ($1, $2, $3, $4)`, a.ID, a.Title, a.Body, a.PublishedAt)
 		check(err)
 	}
 }
