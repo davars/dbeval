@@ -28,15 +28,13 @@ type Implementation interface {
 	RecentArticles(int) []*Article
 }
 
-const dbname = "dbeval_db"
+const testDatabaseName = "dbeval_db"
 
 const createdb = `
-CREATE DATABASE dbeval_db;
-`
+CREATE DATABASE ` + testDatabaseName + `;`
 
 const dropdb = `
-DROP DATABASE dbeval_db;
-`
+DROP DATABASE ` + testDatabaseName + `;`
 
 const schema = `
 CREATE UNLOGGED TABLE authors (

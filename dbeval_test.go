@@ -163,7 +163,7 @@ func impls() []Implementation {
 func withTestDB(impl Implementation, f func()) {
 	impl.Connect("sslmode=disable dbname=postgres")
 	impl.CreateDatabase()
-	impl.Connect("sslmode=disable dbname=" + dbname)
+	impl.Connect("sslmode=disable dbname=" + testDatabaseName)
 	impl.CreateSchema()
 	defer func() {
 		impl.Connect("sslmode=disable dbname=postgres")
