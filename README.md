@@ -19,3 +19,17 @@ optional context from your error site.  When you get ready to show the error to 
 display it, optionally translating into an understandable error message.  I'm using panics here to simplify the test
 harness.  The DB manipulation implementations then conform to that.  This is not a typical use-case so it's not likely
 to be the best approach for your problem.
+
+### Implementated (suggestions welcome)
+- [x] [github.com/lib/pq](https://godoc.org/github.com/lib/pq)
+- [x] [github.com/jackc/pgx](https://godoc.org/github.com/jackc/pgx)
+- [x] [github.com/jackc/pgx/stdlib](https://godoc.org/github.com/jackc/pgx/stdlib)
+- [x] [upper.io/db.v3](https://godoc.org/upper.io/db.v3)
+- [x] [github.com/jmoiron/sqlx](https://godoc.org/github.com/jmoiron/sqlx)
+- [x] [github.com/jinzhu/gorm](https://godoc.org/github.com/jinzhu/gorm)
+- [x] [github.com/gobuffalo/pop](https://godoc.org/github.com/gobuffalo/pop)
+- [ ] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
+- [ ] [github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)
+- [ ] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
+- [ ] [gopkg.in/gorp.v2](https://godoc.org/gopkg.in/gorp.v2)
+- [ ] [github.com/jmoiron/modl](https://godoc.org/github.com/jmoiron/modl)
