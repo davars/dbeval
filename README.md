@@ -1,5 +1,5 @@
 # dbeval
-Comparison of Go database libraries
+Comparison of Go libraries for working with PostgreSQL
 
 Runs benchmarks on the same "typical" database workflow implemented in various ways.
 
