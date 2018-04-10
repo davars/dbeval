@@ -33,3 +33,6 @@ to be the best approach for your problem.
 - [ ] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
 - [ ] [gopkg.in/gorp.v2](https://godoc.org/gopkg.in/gorp.v2)
 - [ ] [github.com/jmoiron/modl](https://godoc.org/github.com/jmoiron/modl)
+- [ ] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)
+- [ ] [gopkg.in/src-d/go-kallax.v1](https://godoc.org/gopkg.in/src-d/go-kallax.v1)
+- [ ] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
