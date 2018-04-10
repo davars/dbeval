@@ -154,6 +154,7 @@ func impls() []Implementation {
 		&SQLX{},
 		&Gorm{},
 		&Pop{},
+		&DBR{},
 	}
 	rand.Shuffle(len(impls), func(i, j int) {
 		impls[i], impls[j] = impls[j], impls[i]
@@ -174,57 +175,59 @@ func withTestDB(impl Implementation, f func()) {
 }
 
 func implTest(t *testing.T, impl Implementation) {
-	withTestDB(impl, func() {
+	t.Run(fmt.Sprintf("%T", impl), func(t *testing.T) {
+		withTestDB(impl, func() {
 
-		impl.InsertAuthors([]*Author{
-			{
-				ID:   1234,
-				Name: "Dave",
-			},
-			{
-				ID:   2345,
-				Name: "Not Dave",
-			},
-			{
-				ID:   3456,
-				Name: "Dave",
-			},
+			impl.InsertAuthors([]*Author{
+				{
+					ID:   1234,
+					Name: "Dave",
+				},
+				{
+					ID:   2345,
+					Name: "Not Dave",
+				},
+				{
+					ID:   3456,
+					Name: "Dave",
+				},
+			})
+			assert.Equal(t, &Author{ID: 1234, Name: "Dave"}, impl.FindAuthorByID(1234))
+			assert.Equal(t, &Author{ID: 2345, Name: "Not Dave"}, impl.FindAuthorByID(2345))
+			assert.Equal(t, []*Author{{ID: 2345, Name: "Not Dave"}}, impl.FindAuthorsByName("Not Dave"))
+			assert.Equal(t, []*Author{{ID: 1234, Name: "Dave"}, {ID: 3456, Name: "Dave"}}, impl.FindAuthorsByName("Dave"))
+
+			impl.InsertArticles([]*Article{
+				{
+					ID:          123,
+					PublishedAt: time.Date(2012, 1, 1, 0, 0, 0, 0, time.Local),
+				},
+				{
+					ID:          234,
+					PublishedAt: time.Date(2010, 1, 1, 0, 0, 0, 0, time.Local),
+				},
+				{
+					ID:          345,
+					PublishedAt: time.Date(2013, 1, 1, 0, 0, 0, 0, time.Local),
+				},
+			})
+
+			expected, err := json.Marshal([]*Article{
+				{
+					ID:          345,
+					PublishedAt: time.Date(2013, 1, 1, 0, 0, 0, 0, time.Local),
+				},
+				{
+					ID:          123,
+					PublishedAt: time.Date(2012, 1, 1, 0, 0, 0, 0, time.Local),
+				},
+			})
+			assert.NoError(t, err)
+
+			actual, err := json.Marshal(impl.RecentArticles(2))
+			assert.NoError(t, err)
+
+			assert.Equal(t, string(expected), string(actual))
 		})
-		assert.Equal(t, &Author{ID: 1234, Name: "Dave"}, impl.FindAuthorByID(1234))
-		assert.Equal(t, &Author{ID: 2345, Name: "Not Dave"}, impl.FindAuthorByID(2345))
-		assert.Equal(t, []*Author{{ID: 2345, Name: "Not Dave"}}, impl.FindAuthorsByName("Not Dave"))
-		assert.Equal(t, []*Author{{ID: 1234, Name: "Dave"}, {ID: 3456, Name: "Dave"}}, impl.FindAuthorsByName("Dave"))
-
-		impl.InsertArticles([]*Article{
-			{
-				ID:          123,
-				PublishedAt: time.Date(2012, 1, 1, 0, 0, 0, 0, time.Local),
-			},
-			{
-				ID:          234,
-				PublishedAt: time.Date(2010, 1, 1, 0, 0, 0, 0, time.Local),
-			},
-			{
-				ID:          345,
-				PublishedAt: time.Date(2013, 1, 1, 0, 0, 0, 0, time.Local),
-			},
-		})
-
-		expected, err := json.Marshal([]*Article{
-			{
-				ID:          345,
-				PublishedAt: time.Date(2013, 1, 1, 0, 0, 0, 0, time.Local),
-			},
-			{
-				ID:          123,
-				PublishedAt: time.Date(2012, 1, 1, 0, 0, 0, 0, time.Local),
-			},
-		})
-		assert.NoError(t, err)
-
-		actual, err := json.Marshal(impl.RecentArticles(2))
-		assert.NoError(t, err)
-
-		assert.Equal(t, string(expected), string(actual))
 	})
 }

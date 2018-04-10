@@ -28,7 +28,7 @@ to be the best approach for your problem.
 - [x] [github.com/jmoiron/sqlx](https://godoc.org/github.com/jmoiron/sqlx)
 - [x] [github.com/jinzhu/gorm](https://godoc.org/github.com/jinzhu/gorm)
 - [x] [github.com/gobuffalo/pop](https://godoc.org/github.com/gobuffalo/pop)
-- [ ] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
+- [x] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
 - [ ] [github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)
 - [ ] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
 - [ ] [gopkg.in/gorp.v2](https://godoc.org/gopkg.in/gorp.v2)

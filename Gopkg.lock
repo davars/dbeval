@@ -69,6 +69,15 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/gocraft/dbr"
+  packages = [
+    ".",
+    "dialect"
+  ]
+  revision = "5d59a8b3aa915660960329efb3af5513e7a0db07"
+
+[[projects]]
+  branch = "master"
   name = "github.com/icrowley/fake"
   packages = ["."]
   revision = "4178557ae428460c3780a381c824a1f3aceb6325"
@@ -234,6 +243,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bc9a1ae606c5a576e580acb89ae9ab0ec25ae56397cb10981ba85d0e424a0267"
+  inputs-digest = "546fe183619e2e6acda7bc1d4419b2d1792717096f955935a76b1169095f7c4b"
   solver-name = "gps-cdcl"
   solver-version = 1
