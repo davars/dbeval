@@ -35,4 +35,4 @@ to be the best approach for your problem.
 - [ ] [github.com/jmoiron/modl](https://godoc.org/github.com/jmoiron/modl)
 - [ ] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)
 - [ ] [gopkg.in/src-d/go-kallax.v1](https://godoc.org/gopkg.in/src-d/go-kallax.v1)
-- [ ] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
+- [x] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
