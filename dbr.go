@@ -1,56 +1,17 @@
 package dbeval
 
 import (
-	"log"
-	"sync"
 	"time"
 
 	"github.com/gocraft/dbr"
 )
 
-var (
-	dbrInsertNiceOnce sync.Once
-	dbrTimeWarnOnce   sync.Once
-)
+// Notes:
+// - trivial to insert multiple records with a single statement
+// - inserts tz-ignorant times into tz-aware columns
 
 type DBR struct {
 	db *dbr.Session
-}
-
-type dbrLogger struct{}
-
-// Event receives a simple notification when various events occur
-func (n *dbrLogger) Event(eventName string) {
-	log.Println(eventName)
-}
-
-// EventKv receives a notification when various events occur along with
-// optional key/value data
-func (n *dbrLogger) EventKv(eventName string, kvs map[string]string) {
-	log.Printf("%s %v", eventName, kvs)
-}
-
-// EventErr receives a notification of an error if one occurs
-func (n *dbrLogger) EventErr(eventName string, err error) error {
-	log.Printf("%s %v", eventName, err)
-	return err
-}
-
-// EventErrKv receives a notification of an error if one occurs along with
-// optional key/value data
-func (n *dbrLogger) EventErrKv(eventName string, err error, kvs map[string]string) error {
-	log.Printf("%s %v %v", eventName, err, err)
-	return err
-}
-
-// Timing receives the time an event took to happen
-func (n *dbrLogger) Timing(eventName string, nanoseconds int64) {
-	log.Printf("%s %d", eventName, nanoseconds)
-}
-
-// TimingKv receives the time an event took to happen along with optional key/value data
-func (n *dbrLogger) TimingKv(eventName string, nanoseconds int64, kvs map[string]string) {
-	log.Printf("%s %v %v", eventName, nanoseconds, kvs)
 }
 
 func (p *DBR) Connect(ds string) {
@@ -60,7 +21,6 @@ func (p *DBR) Connect(ds string) {
 	}
 	conn, err := dbr.Open("postgres", ds, nil)
 	check(err)
-	//p.db = conn.NewSession(&dbrLogger{})
 	p.db = conn.NewSession(nil)
 }
 
@@ -80,9 +40,6 @@ func (p *DBR) CreateSchema() {
 }
 
 func (p *DBR) InsertAuthors(as []*Author) {
-	dbrInsertNiceOnce.Do(func() {
-		log.Println("NICE: dbr makes it trivial to insert multiple records with a single statement")
-	})
 	tx, err := p.db.Begin()
 	check(err)
 	defer tx.RollbackUnlessCommitted()
@@ -96,17 +53,11 @@ func (p *DBR) InsertAuthors(as []*Author) {
 }
 
 func (p *DBR) InsertArticles(as []*Article) {
-	dbrInsertNiceOnce.Do(func() {
-		log.Println("NICE: dbr makes it trivial to insert multiple records with a single statement")
-	})
 	tx, err := p.db.Begin()
 	check(err)
 	defer tx.RollbackUnlessCommitted()
 	ib := tx.InsertInto("articles").Columns("id", "title", "body", "published_at")
 	for _, a := range as {
-		dbrTimeWarnOnce.Do(func() {
-			log.Println("WARNING: dbr inserts tz-ignorant times into tz-aware columns")
-		})
 		// bug in time encoding, drops tz on insert, so convert to local and insert as UTC.  PG will add back local tz,
 		// hopefully the same one as this program.
 		t := a.PublishedAt.Local()

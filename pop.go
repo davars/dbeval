@@ -1,15 +1,13 @@
 package dbeval
 
 import (
-	"sync"
-
-	"log"
-
 	"github.com/gobuffalo/pop"
 	"upper.io/db.v3/postgresql"
 )
 
-var popInsertWarnOnce sync.Once
+// Notes:
+// - can't use zero value as primary key
+// - using raw SQL for insert because inserting with known IDs is not supported
 
 type Pop struct {
 	db *pop.Connection
@@ -24,10 +22,7 @@ func (g *Pop) Connect(ds string) {
 	check(err)
 	g.db, err = pop.NewConnection(&pop.ConnectionDetails{
 		Dialect:  "postgres",
-		Host:     "localhost",
-		Port:     "5432",
 		Database: url.Database,
-		Options:  url.Options,
 	})
 	check(err)
 	check(g.db.Open())
@@ -46,9 +41,6 @@ func (g *Pop) CreateSchema() {
 }
 
 func (g *Pop) InsertAuthors(as []*Author) {
-	popInsertWarnOnce.Do(func() {
-		log.Println("WARNING: pop uses raw SQL for insert because inserting with known IDs is not supported")
-	})
 	err := g.db.Transaction(func(tx *pop.Connection) error {
 		for _, a := range as {
 			check(g.db.RawQuery(`INSERT INTO authors (id, name) VALUES ($1, $2)`, a.ID, a.Name).Exec())
@@ -59,9 +51,6 @@ func (g *Pop) InsertAuthors(as []*Author) {
 }
 
 func (g *Pop) InsertArticles(as []*Article) {
-	popInsertWarnOnce.Do(func() {
-		log.Println("WARNING: pop uses raw SQL for insert because inserting with known IDs is not supported")
-	})
 	err := g.db.Transaction(func(tx *pop.Connection) error {
 		for _, a := range as {
 			check(g.db.RawQuery(`INSERT INTO articles (id, title, body, published_at) VALUES ($1, $2, $3, $4)`, a.ID, a.Title, a.Body, a.PublishedAt).Exec())

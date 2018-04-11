@@ -26,6 +26,19 @@
   version = "v1.6.0"
 
 [[projects]]
+  name = "github.com/go-pg/pg"
+  packages = [
+    ".",
+    "internal",
+    "internal/parser",
+    "internal/pool",
+    "orm",
+    "types"
+  ]
+  revision = "5b73ce88484575f3480edf393237f6bf79d5f166"
+  version = "v6.11.2"
+
+[[projects]]
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
   revision = "a0583e0143b1624142adab07e0e97fe106d99561"
@@ -243,6 +256,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "546fe183619e2e6acda7bc1d4419b2d1792717096f955935a76b1169095f7c4b"
+  inputs-digest = "ea37175e02f9a09d9a81ee8a4257e03ad5ffb12ccb4fccf921e75e21cf604fae"
   solver-name = "gps-cdcl"
   solver-version = 1
