@@ -1,8 +1,6 @@
 package dbeval
 
 import (
-	"context"
-
 	"upper.io/db.v3"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/postgresql"
@@ -43,31 +41,21 @@ func (p *UpperDB) CreateSchema() {
 }
 
 func (p *UpperDB) InsertAuthors(as []*Author) {
-	err := p.db.Tx(context.Background(), func(sess sqlbuilder.Tx) error {
-		coll := sess.Collection("authors")
-		for _, a := range as {
-			_, err := coll.Insert(a)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-	check(err)
+	batch := p.db.InsertInto("authors").Batch(len(as))
+	for _, a := range as {
+		batch = batch.Values(a)
+	}
+	batch.Done()
+	check(batch.Wait())
 }
 
 func (p *UpperDB) InsertArticles(as []*Article) {
-	err := p.db.Tx(context.Background(), func(sess sqlbuilder.Tx) error {
-		coll := sess.Collection("articles")
-		for _, a := range as {
-			_, err := coll.Insert(a)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-	check(err)
+	batch := p.db.InsertInto("articles").Batch(len(as))
+	for _, a := range as {
+		batch = batch.Values(a)
+	}
+	batch.Done()
+	check(batch.Wait())
 }
 
 func (p *UpperDB) FindAuthorByID(id int64) *Author {
