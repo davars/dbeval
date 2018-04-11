@@ -3,6 +3,8 @@ Comparison of Go libraries for working with PostgreSQL
 
 Runs benchmarks on the same "typical" database workflow implemented in various ways.
 
+#### [Latest Results](https://github.com/davars/dbeval/blob/master/results.txt)
+
 ## Warning: calls `DROP DATABASE` on local postgres instance! 
 
 ```
