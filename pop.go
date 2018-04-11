@@ -1,8 +1,9 @@
 package dbeval
 
 import (
-	"log"
 	"sync"
+
+	"log"
 
 	"github.com/gobuffalo/pop"
 	"upper.io/db.v3/postgresql"
@@ -30,9 +31,6 @@ func (g *Pop) Connect(ds string) {
 	})
 	check(err)
 	check(g.db.Open())
-	popInsertWarnOnce.Do(func() {
-		log.Println("WARNING: pop uses raw SQL for insert because inserting with known IDs is not supported")
-	})
 }
 
 func (g *Pop) CreateDatabase() {
@@ -48,6 +46,9 @@ func (g *Pop) CreateSchema() {
 }
 
 func (g *Pop) InsertAuthors(as []*Author) {
+	popInsertWarnOnce.Do(func() {
+		log.Println("WARNING: pop uses raw SQL for insert because inserting with known IDs is not supported")
+	})
 	err := g.db.Transaction(func(tx *pop.Connection) error {
 		for _, a := range as {
 			check(g.db.RawQuery(`INSERT INTO authors (id, name) VALUES ($1, $2)`, a.ID, a.Name).Exec())
@@ -58,6 +59,9 @@ func (g *Pop) InsertAuthors(as []*Author) {
 }
 
 func (g *Pop) InsertArticles(as []*Article) {
+	popInsertWarnOnce.Do(func() {
+		log.Println("WARNING: pop uses raw SQL for insert because inserting with known IDs is not supported")
+	})
 	err := g.db.Transaction(func(tx *pop.Connection) error {
 		for _, a := range as {
 			check(g.db.RawQuery(`INSERT INTO articles (id, title, body, published_at) VALUES ($1, $2, $3, $4)`, a.ID, a.Title, a.Body, a.PublishedAt).Exec())

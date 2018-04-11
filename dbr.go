@@ -2,9 +2,15 @@ package dbeval
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/gocraft/dbr"
+)
+
+var (
+	dbrInsertNiceOnce sync.Once
+	dbrTimeWarnOnce   sync.Once
 )
 
 type DBR struct {
@@ -74,6 +80,9 @@ func (p *DBR) CreateSchema() {
 }
 
 func (p *DBR) InsertAuthors(as []*Author) {
+	dbrInsertNiceOnce.Do(func() {
+		log.Println("NICE: dbr makes it trivial to insert multiple records with a single statement")
+	})
 	tx, err := p.db.Begin()
 	check(err)
 	defer tx.RollbackUnlessCommitted()
@@ -87,12 +96,19 @@ func (p *DBR) InsertAuthors(as []*Author) {
 }
 
 func (p *DBR) InsertArticles(as []*Article) {
+	dbrInsertNiceOnce.Do(func() {
+		log.Println("NICE: dbr makes it trivial to insert multiple records with a single statement")
+	})
 	tx, err := p.db.Begin()
 	check(err)
 	defer tx.RollbackUnlessCommitted()
 	ib := tx.InsertInto("articles").Columns("id", "title", "body", "published_at")
 	for _, a := range as {
-		// bug in time encoding, drops tz on insert, so convert to local and insert as UTC
+		dbrTimeWarnOnce.Do(func() {
+			log.Println("WARNING: dbr inserts tz-ignorant times into tz-aware columns")
+		})
+		// bug in time encoding, drops tz on insert, so convert to local and insert as UTC.  PG will add back local tz,
+		// hopefully the same one as this program.
 		t := a.PublishedAt.Local()
 		a.PublishedAt = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.UTC)
 		ib.Record(a)
