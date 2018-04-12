@@ -34,7 +34,7 @@ const createdb = `
 CREATE DATABASE ` + testDatabaseName + `;`
 
 const dropdb = `
-DROP DATABASE ` + testDatabaseName + `;`
+DROP DATABASE IF EXISTS ` + testDatabaseName + `;`
 
 const schema = `
 CREATE UNLOGGED TABLE authors (

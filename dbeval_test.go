@@ -165,6 +165,7 @@ func impls() []Implementation {
 
 func withTestDB(impl Implementation, f func()) {
 	impl.Connect("sslmode=disable dbname=postgres")
+	impl.DropDatabase()
 	impl.CreateDatabase()
 	impl.Connect("sslmode=disable dbname=" + testDatabaseName)
 	impl.CreateSchema()
