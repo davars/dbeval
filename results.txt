@@ -1,77 +1,84 @@
 === RUN   TestImplementations
+=== RUN   TestImplementations/*dbeval.PQ
+=== RUN   TestImplementations/*dbeval.Gorm
+=== RUN   TestImplementations/*dbeval.Memory
+=== RUN   TestImplementations/*dbeval.PGXStdlib
+=== RUN   TestImplementations/*dbeval.UpperDB
+=== RUN   TestImplementations/*dbeval.DBR
+=== RUN   TestImplementations/*dbeval.GoPG
+=== RUN   TestImplementations/*dbeval.Xorm
+=== RUN   TestImplementations/*dbeval.SQLX
 === RUN   TestImplementations/*dbeval.Pop
 === RUN   TestImplementations/*dbeval.PGX
-=== RUN   TestImplementations/*dbeval.SQLX
-=== RUN   TestImplementations/*dbeval.GoPG
-=== RUN   TestImplementations/*dbeval.Gorm
-=== RUN   TestImplementations/*dbeval.DBR
-=== RUN   TestImplementations/*dbeval.UpperDB
-=== RUN   TestImplementations/*dbeval.PQ
-=== RUN   TestImplementations/*dbeval.PGXStdlib
-=== RUN   TestImplementations/*dbeval.Memory
---- PASS: TestImplementations (6.44s)
-    --- PASS: TestImplementations/*dbeval.Pop (0.79s)
-    --- PASS: TestImplementations/*dbeval.PGX (0.72s)
-    --- PASS: TestImplementations/*dbeval.SQLX (0.71s)
-    --- PASS: TestImplementations/*dbeval.GoPG (0.72s)
-    --- PASS: TestImplementations/*dbeval.Gorm (0.71s)
-    --- PASS: TestImplementations/*dbeval.DBR (0.65s)
-    --- PASS: TestImplementations/*dbeval.UpperDB (0.72s)
-    --- PASS: TestImplementations/*dbeval.PQ (0.71s)
-    --- PASS: TestImplementations/*dbeval.PGXStdlib (0.72s)
+--- PASS: TestImplementations (7.69s)
+    --- PASS: TestImplementations/*dbeval.PQ (0.76s)
+    --- PASS: TestImplementations/*dbeval.Gorm (0.78s)
     --- PASS: TestImplementations/*dbeval.Memory (0.00s)
+    --- PASS: TestImplementations/*dbeval.PGXStdlib (0.75s)
+    --- PASS: TestImplementations/*dbeval.UpperDB (0.77s)
+    --- PASS: TestImplementations/*dbeval.DBR (0.76s)
+    --- PASS: TestImplementations/*dbeval.GoPG (0.76s)
+    --- PASS: TestImplementations/*dbeval.Xorm (0.74s)
+    --- PASS: TestImplementations/*dbeval.SQLX (0.78s)
+    --- PASS: TestImplementations/*dbeval.Pop (0.81s)
+    --- PASS: TestImplementations/*dbeval.PGX (0.77s)
 goos: darwin
 goarch: amd64
 pkg: github.com/davars/dbeval
-BenchmarkInsert/*dbeval.GoPG/Authors-4         	    5000	    254286 ns/op	    2623 B/op	      77 allocs/op
-BenchmarkInsert/*dbeval.Gorm/Authors-4         	    1000	   1090318 ns/op	   50492 B/op	    1090 allocs/op
-BenchmarkInsert/*dbeval.PGXStdlib/Authors-4    	    2000	    773419 ns/op	    6179 B/op	     187 allocs/op
-BenchmarkInsert/*dbeval.UpperDB/Authors-4      	    5000	    273397 ns/op	   25129 B/op	    1131 allocs/op
-BenchmarkInsert/*dbeval.Pop/Authors-4          	      50	  26608658 ns/op	  311592 B/op	    2322 allocs/op
-BenchmarkInsert/*dbeval.PGX/Authors-4          	    2000	    757502 ns/op	    4025 B/op	     130 allocs/op
-BenchmarkInsert/*dbeval.Memory/Authors-4       	  100000	     14246 ns/op	    3087 B/op	      69 allocs/op
-BenchmarkInsert/*dbeval.SQLX/Authors-4         	    1000	   1141790 ns/op	   10678 B/op	     282 allocs/op
-BenchmarkInsert/*dbeval.PQ/Authors-4           	    1000	   1153995 ns/op	    9888 B/op	     296 allocs/op
-BenchmarkInsert/*dbeval.DBR/Authors-4          	    5000	    278917 ns/op	   12849 B/op	     228 allocs/op
-BenchmarkInsert/*dbeval.PGX/Articles-4         	    1000	   1207929 ns/op	  103655 B/op	    1578 allocs/op
-BenchmarkInsert/*dbeval.SQLX/Articles-4        	    1000	   1424860 ns/op	  120495 B/op	    1851 allocs/op
-BenchmarkInsert/*dbeval.UpperDB/Articles-4     	    2000	    777694 ns/op	  168967 B/op	    3126 allocs/op
-BenchmarkInsert/*dbeval.GoPG/Articles-4        	    2000	    764216 ns/op	   96514 B/op	    1527 allocs/op
-BenchmarkInsert/*dbeval.Pop/Articles-4         	      50	  26276126 ns/op	  423468 B/op	    3780 allocs/op
-BenchmarkInsert/*dbeval.Gorm/Articles-4        	    1000	   1498357 ns/op	  172392 B/op	    2824 allocs/op
-BenchmarkInsert/*dbeval.DBR/Articles-4         	    1000	   1031431 ns/op	  164295 B/op	    1799 allocs/op
-BenchmarkInsert/*dbeval.PQ/Articles-4          	    1000	   1375521 ns/op	  124759 B/op	    1792 allocs/op
-BenchmarkInsert/*dbeval.Memory/Articles-4      	    2000	   1544654 ns/op	   96732 B/op	    1502 allocs/op
-BenchmarkInsert/*dbeval.PGXStdlib/Articles-4   	    1000	   1436897 ns/op	  113080 B/op	    1696 allocs/op
-BenchmarkFindAuthorByID/*dbeval.GoPG-4         	   30000	     44480 ns/op	     741 B/op	      12 allocs/op
-BenchmarkFindAuthorByID/*dbeval.Memory-4       	10000000	       136 ns/op	       0 B/op	       0 allocs/op
-BenchmarkFindAuthorByID/*dbeval.UpperDB-4      	   20000	     99006 ns/op	    9871 B/op	     448 allocs/op
-BenchmarkFindAuthorByID/*dbeval.DBR-4          	   20000	     66575 ns/op	    2479 B/op	      47 allocs/op
-BenchmarkFindAuthorByID/*dbeval.Gorm-4         	   10000	    153300 ns/op	   10878 B/op	     165 allocs/op
-BenchmarkFindAuthorByID/*dbeval.PGXStdlib-4    	   20000	     79023 ns/op	    1618 B/op	      35 allocs/op
-BenchmarkFindAuthorByID/*dbeval.PQ-4           	   20000	     80666 ns/op	    1232 B/op	      36 allocs/op
-BenchmarkFindAuthorByID/*dbeval.PGX-4          	   20000	     63884 ns/op	     728 B/op	      15 allocs/op
-BenchmarkFindAuthorByID/*dbeval.SQLX-4         	   20000	     80830 ns/op	    1850 B/op	      40 allocs/op
-BenchmarkFindAuthorByID/*dbeval.Pop-4          	     500	   2721797 ns/op	   29585 B/op	     250 allocs/op
-BenchmarkFindAuthorByName/*dbeval.Pop-4        	     200	   6968708 ns/op	  203153 B/op	    6262 allocs/op
-BenchmarkFindAuthorByName/*dbeval.SQLX-4       	    1000	   1326392 ns/op	  130552 B/op	    4052 allocs/op
-BenchmarkFindAuthorByName/*dbeval.Memory-4     	20000000	        81.3 ns/op	       0 B/op	       0 allocs/op
-BenchmarkFindAuthorByName/*dbeval.DBR-4        	    1000	   2165215 ns/op	  606102 B/op	   13050 allocs/op
-BenchmarkFindAuthorByName/*dbeval.UpperDB-4    	    1000	   1532742 ns/op	  166003 B/op	    6457 allocs/op
-BenchmarkFindAuthorByName/*dbeval.PQ-4         	    2000	    997391 ns/op	   93258 B/op	    4043 allocs/op
-BenchmarkFindAuthorByName/*dbeval.GoPG-4       	    2000	    912782 ns/op	  100920 B/op	    3026 allocs/op
-BenchmarkFindAuthorByName/*dbeval.PGXStdlib-4  	    2000	   1077701 ns/op	  130358 B/op	    4048 allocs/op
-BenchmarkFindAuthorByName/*dbeval.Gorm-4       	     500	   3406394 ns/op	 1506628 B/op	   25124 allocs/op
-BenchmarkFindAuthorByName/*dbeval.PGX-4        	    2000	    875504 ns/op	  105747 B/op	    2033 allocs/op
-BenchmarkRecentArticles/*dbeval.DBR-4          	     200	   6111089 ns/op	 4543641 B/op	   47427 allocs/op
-BenchmarkRecentArticles/*dbeval.PGXStdlib-4    	     500	   3423893 ns/op	 3548777 B/op	   14465 allocs/op
-BenchmarkRecentArticles/*dbeval.SQLX-4         	     500	   3692642 ns/op	 3549136 B/op	   14470 allocs/op
-BenchmarkRecentArticles/*dbeval.Gorm-4         	     200	   7818891 ns/op	 6755134 B/op	   83473 allocs/op
-BenchmarkRecentArticles/*dbeval.PGX-4          	     500	   3021193 ns/op	 3403489 B/op	    6444 allocs/op
-BenchmarkRecentArticles/*dbeval.PQ-4           	     300	   3798273 ns/op	 3328370 B/op	   17440 allocs/op
-BenchmarkRecentArticles/*dbeval.UpperDB-4      	     300	   4448247 ns/op	 3525656 B/op	   23780 allocs/op
-BenchmarkRecentArticles/*dbeval.Pop-4          	     200	   8843140 ns/op	 3517832 B/op	   23637 allocs/op
-BenchmarkRecentArticles/*dbeval.GoPG-4         	     500	   3860912 ns/op	 1837927 B/op	   10030 allocs/op
-BenchmarkRecentArticles/*dbeval.Memory-4       	50000000	        32.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInsert/*dbeval.UpperDB/Authors-4         	    5000	    272282 ns/op	   25130 B/op	    1131 allocs/op
+BenchmarkInsert/*dbeval.GoPG/Authors-4            	    5000	    250965 ns/op	    2620 B/op	      77 allocs/op
+BenchmarkInsert/*dbeval.PGXStdlib/Authors-4       	    2000	    762745 ns/op	    6131 B/op	     187 allocs/op
+BenchmarkInsert/*dbeval.Gorm/Authors-4            	    1000	   1103981 ns/op	   37752 B/op	     990 allocs/op
+BenchmarkInsert/*dbeval.Memory/Authors-4          	  100000	     13670 ns/op	    3088 B/op	      69 allocs/op
+BenchmarkInsert/*dbeval.PQ/Authors-4              	    2000	    850224 ns/op	    9855 B/op	     296 allocs/op
+BenchmarkInsert/*dbeval.DBR/Authors-4             	    5000	    284807 ns/op	   12734 B/op	     227 allocs/op
+BenchmarkInsert/*dbeval.SQLX/Authors-4            	    1000	   1089748 ns/op	   10372 B/op	     280 allocs/op
+BenchmarkInsert/*dbeval.Xorm/Authors-4            	    5000	    252930 ns/op	   12998 B/op	     360 allocs/op
+BenchmarkInsert/*dbeval.PGX/Authors-4             	    1000	   1041212 ns/op	    4229 B/op	     132 allocs/op
+BenchmarkInsert/*dbeval.Pop/Authors-4             	      50	  29555504 ns/op	  312840 B/op	    2344 allocs/op
+BenchmarkInsert/*dbeval.DBR/Articles-4            	    1000	   1013725 ns/op	  164537 B/op	    1799 allocs/op
+BenchmarkInsert/*dbeval.PQ/Articles-4             	    1000	   1373378 ns/op	  124249 B/op	    1789 allocs/op
+BenchmarkInsert/*dbeval.Xorm/Articles-4           	    2000	    836396 ns/op	  156699 B/op	    2051 allocs/op
+BenchmarkInsert/*dbeval.PGXStdlib/Articles-4      	    1000	   1394389 ns/op	  115917 B/op	    1726 allocs/op
+BenchmarkInsert/*dbeval.Gorm/Articles-4           	    1000	   1490616 ns/op	  158841 B/op	    2716 allocs/op
+BenchmarkInsert/*dbeval.UpperDB/Articles-4        	    2000	    796684 ns/op	  168005 B/op	    3114 allocs/op
+BenchmarkInsert/*dbeval.PGX/Articles-4            	    1000	   1204543 ns/op	  104345 B/op	    1588 allocs/op
+BenchmarkInsert/*dbeval.SQLX/Articles-4           	    1000	   1440327 ns/op	  121492 B/op	    1862 allocs/op
+BenchmarkInsert/*dbeval.Memory/Articles-4         	    2000	   1490020 ns/op	   96466 B/op	    1498 allocs/op
+BenchmarkInsert/*dbeval.GoPG/Articles-4           	    2000	    758427 ns/op	   97146 B/op	    1536 allocs/op
+BenchmarkInsert/*dbeval.Pop/Articles-4            	      50	  27450472 ns/op	  423412 B/op	    3788 allocs/op
+BenchmarkFindAuthorByID/*dbeval.UpperDB-4         	   20000	     86406 ns/op	    9872 B/op	     448 allocs/op
+BenchmarkFindAuthorByID/*dbeval.Gorm-4            	   10000	    142933 ns/op	    7111 B/op	     140 allocs/op
+BenchmarkFindAuthorByID/*dbeval.Pop-4             	    1000	   2127653 ns/op	   29610 B/op	     249 allocs/op
+BenchmarkFindAuthorByID/*dbeval.Memory-4          	10000000	       138 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFindAuthorByID/*dbeval.PQ-4              	   20000	     75164 ns/op	    1243 B/op	      36 allocs/op
+BenchmarkFindAuthorByID/*dbeval.PGXStdlib-4       	   20000	     82823 ns/op	    1718 B/op	      36 allocs/op
+BenchmarkFindAuthorByID/*dbeval.Xorm-4            	   10000	    140847 ns/op	    4813 B/op	     122 allocs/op
+BenchmarkFindAuthorByID/*dbeval.PGX-4             	   20000	     62954 ns/op	     728 B/op	      15 allocs/op
+BenchmarkFindAuthorByID/*dbeval.SQLX-4            	   20000	     80980 ns/op	    1823 B/op	      39 allocs/op
+BenchmarkFindAuthorByID/*dbeval.GoPG-4            	   30000	     44054 ns/op	     742 B/op	      12 allocs/op
+BenchmarkFindAuthorByID/*dbeval.DBR-4             	   20000	     66695 ns/op	    2558 B/op	      48 allocs/op
+BenchmarkFindAuthorByName/*dbeval.Gorm-4          	     500	   3551428 ns/op	 1509762 B/op	   25124 allocs/op
+BenchmarkFindAuthorByName/*dbeval.DBR-4           	    1000	   2129093 ns/op	  609268 B/op	   13050 allocs/op
+BenchmarkFindAuthorByName/*dbeval.PQ-4            	    2000	    965512 ns/op	   96382 B/op	    4043 allocs/op
+BenchmarkFindAuthorByName/*dbeval.UpperDB-4       	    1000	   1511692 ns/op	  169131 B/op	    6457 allocs/op
+BenchmarkFindAuthorByName/*dbeval.PGX-4           	    2000	    897222 ns/op	  113334 B/op	    2034 allocs/op
+BenchmarkFindAuthorByName/*dbeval.Xorm-4          	     500	   2640418 ns/op	  493100 B/op	   19117 allocs/op
+BenchmarkFindAuthorByName/*dbeval.SQLX-4          	    1000	   1286271 ns/op	  138144 B/op	    4053 allocs/op
+BenchmarkFindAuthorByName/*dbeval.PGXStdlib-4     	    1000	   1088311 ns/op	  137949 B/op	    4049 allocs/op
+BenchmarkFindAuthorByName/*dbeval.Pop-4           	     200	   7233796 ns/op	  206153 B/op	    6277 allocs/op
+BenchmarkFindAuthorByName/*dbeval.Memory-4        	20000000	        68.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFindAuthorByName/*dbeval.GoPG-4          	    2000	    870687 ns/op	  104040 B/op	    3026 allocs/op
+BenchmarkRecentArticles/*dbeval.DBR-4             	     200	   6303639 ns/op	 4553755 B/op	   47432 allocs/op
+BenchmarkRecentArticles/*dbeval.Memory-4          	50000000	        32.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRecentArticles/*dbeval.UpperDB-4         	     300	   4520934 ns/op	 3535807 B/op	   23785 allocs/op
+BenchmarkRecentArticles/*dbeval.SQLX-4            	     300	   3802652 ns/op	 3563319 B/op	   14475 allocs/op
+BenchmarkRecentArticles/*dbeval.Gorm-4            	     200	   7835650 ns/op	 6765226 B/op	   83478 allocs/op
+BenchmarkRecentArticles/*dbeval.GoPG-4            	     500	   3707347 ns/op	 1839578 B/op	   10030 allocs/op
+BenchmarkRecentArticles/*dbeval.PGXStdlib-4       	     500	   3473777 ns/op	 3562784 B/op	   14469 allocs/op
+BenchmarkRecentArticles/*dbeval.PGX-4             	     500	   3088626 ns/op	 3417440 B/op	    6447 allocs/op
+BenchmarkRecentArticles/*dbeval.Pop-4             	     200	   8595153 ns/op	 3528960 B/op	   23659 allocs/op
+BenchmarkRecentArticles/*dbeval.PQ-4              	     300	   3911850 ns/op	 3330087 B/op	   17431 allocs/op
+BenchmarkRecentArticles/*dbeval.Xorm-4            	     200	   8107244 ns/op	 5177237 B/op	   81487 allocs/op
 PASS
-ok  	github.com/davars/dbeval	399.123s
+ok  	github.com/davars/dbeval	441.981s

@@ -45,6 +45,24 @@
   version = "v1.3"
 
 [[projects]]
+  name = "github.com/go-xorm/builder"
+  packages = ["."]
+  revision = "a9b7ffcca3f0c6445c4e3b1bf72c01578817a6c3"
+  version = "v0.1.0"
+
+[[projects]]
+  name = "github.com/go-xorm/core"
+  packages = ["."]
+  revision = "f43c33d9a48db006417a7ac4c16b08897e3e1458"
+  version = "v0.5.8"
+
+[[projects]]
+  name = "github.com/go-xorm/xorm"
+  packages = ["."]
+  revision = "e98616d6568c1845575a9112191745f071d9569a"
+  version = "v0.6.5"
+
+[[projects]]
   name = "github.com/gobuffalo/envy"
   packages = ["."]
   revision = "ef60bfc50c8f92d1ee64674d8ce7a48f1f67625e"
@@ -256,6 +274,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ea37175e02f9a09d9a81ee8a4257e03ad5ffb12ccb4fccf921e75e21cf604fae"
+  inputs-digest = "70253806b3012f0a0ae6f5a0b5a90db5c405b6853876e848eb1c94c3a557f899"
   solver-name = "gps-cdcl"
   solver-version = 1

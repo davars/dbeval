@@ -32,7 +32,7 @@ to be the best approach for your problem.
 - [x] [github.com/gobuffalo/pop](https://godoc.org/github.com/gobuffalo/pop)
 - [x] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
 - [ ] ~~[github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)~~ Can't figure out how to disconnect in order to drop test database
-- [ ] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
+- [x] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
 - [ ] [gopkg.in/gorp.v2](https://godoc.org/gopkg.in/gorp.v2)
 - [ ] [github.com/jmoiron/modl](https://godoc.org/github.com/jmoiron/modl)
 - [ ] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)

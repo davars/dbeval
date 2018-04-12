@@ -5,15 +5,23 @@ import (
 )
 
 type Author struct {
-	ID   int64  `db:"id" gorm:"PRIMARY_KEY"`
+	ID   int64  `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'"`
 	Name string `db:"name"`
 }
 
+func (Author) TableName() string {
+	return "authors"
+}
+
 type Article struct {
-	ID          int64     `db:"id" gorm:"PRIMARY_KEY"`
+	ID          int64     `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'"`
 	Title       string    `db:"title"`
 	Body        string    `db:"body"`
 	PublishedAt time.Time `db:"published_at"`
+}
+
+func (Article) TableName() string {
+	return "articles"
 }
 
 type Implementation interface {
