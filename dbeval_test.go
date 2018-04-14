@@ -39,6 +39,8 @@ func BenchmarkInsert(b *testing.B) {
 		})
 	}
 
+	fmt.Println()
+
 	for _, impl := range impls() {
 		b.Run(fmt.Sprintf("%T/Articles", impl), func(b *testing.B) {
 			withTestDB(impl, func() {
@@ -62,6 +64,8 @@ func BenchmarkInsert(b *testing.B) {
 			})
 		})
 	}
+
+	fmt.Println()
 }
 
 func BenchmarkFindAuthorByID(b *testing.B) {
@@ -86,6 +90,8 @@ func BenchmarkFindAuthorByID(b *testing.B) {
 			})
 		})
 	}
+
+	fmt.Println()
 }
 
 func BenchmarkFindAuthorByName(b *testing.B) {
@@ -112,6 +118,8 @@ func BenchmarkFindAuthorByName(b *testing.B) {
 			})
 		})
 	}
+
+	fmt.Println()
 }
 
 func BenchmarkRecentArticles(b *testing.B) {
@@ -138,6 +146,8 @@ func BenchmarkRecentArticles(b *testing.B) {
 			})
 		})
 	}
+
+	fmt.Println()
 }
 
 func init() {
