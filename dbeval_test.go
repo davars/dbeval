@@ -167,6 +167,7 @@ func impls() []Implementation {
 		&DBR{},
 		&GoPG{},
 		&Xorm{},
+		&Boiler{},
 	}
 	rand.Shuffle(len(impls), func(i, j int) {
 		impls[i], impls[j] = impls[j], impls[i]
