@@ -22,7 +22,7 @@ display it, optionally translating into an understandable error message.  I'm us
 harness.  The DB manipulation implementations then conform to that.  This is not a typical use-case so it's not likely
 to be the best approach for your problem.
 
-### Implementated (suggestions welcome)
+### Implementated
 - [x] [github.com/lib/pq](https://godoc.org/github.com/lib/pq)
 - [x] [github.com/jackc/pgx](https://godoc.org/github.com/jackc/pgx)
 - [x] [github.com/jackc/pgx/stdlib](https://godoc.org/github.com/jackc/pgx/stdlib)
@@ -31,10 +31,12 @@ to be the best approach for your problem.
 - [x] [github.com/jinzhu/gorm](https://godoc.org/github.com/jinzhu/gorm)
 - [x] [github.com/gobuffalo/pop](https://godoc.org/github.com/gobuffalo/pop)
 - [x] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
-- [ ] ~~[github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)~~ Can't figure out how to disconnect in order to drop test database
 - [x] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
+- [x] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
+- [x] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)
+
+### PRs Welcome
+- [ ] [github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)
 - [ ] [gopkg.in/gorp.v2](https://godoc.org/gopkg.in/gorp.v2)
 - [ ] [github.com/jmoiron/modl](https://godoc.org/github.com/jmoiron/modl)
-- [ ] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)
 - [ ] [gopkg.in/src-d/go-kallax.v1](https://godoc.org/gopkg.in/src-d/go-kallax.v1)
-- [x] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
