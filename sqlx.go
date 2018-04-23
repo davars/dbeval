@@ -1,6 +1,8 @@
 package dbeval
 
 import (
+	"time"
+
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 )
@@ -9,13 +11,16 @@ type SQLX struct {
 	db *sqlx.DB
 }
 
-func (p *SQLX) Connect(ds string) {
+func (p *SQLX) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if p.db != nil {
 		check(p.db.Close())
 		p.db = nil
 	}
 	var err error
 	p.db, err = sqlx.Open("pgx", ds)
+	p.db.SetConnMaxLifetime(connLifetime)
+	p.db.SetMaxIdleConns(idleConns)
+	p.db.SetMaxOpenConns(openConns)
 	check(err)
 }
 

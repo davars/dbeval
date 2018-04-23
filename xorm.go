@@ -1,6 +1,8 @@
 package dbeval
 
 import (
+	"time"
+
 	"github.com/go-xorm/xorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -9,13 +11,16 @@ type Xorm struct {
 	db *xorm.Engine
 }
 
-func (x *Xorm) Connect(ds string) {
+func (x *Xorm) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if x.db != nil {
 		check(x.db.Close())
 		x.db = nil
 	}
 	var err error
 	x.db, err = xorm.NewEngine("postgres", ds)
+	x.db.SetConnMaxLifetime(connLifetime)
+	x.db.SetMaxIdleConns(idleConns)
+	x.db.SetMaxOpenConns(openConns)
 	check(err)
 }
 

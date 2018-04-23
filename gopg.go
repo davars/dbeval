@@ -3,6 +3,8 @@ package dbeval
 import (
 	"os"
 
+	"time"
+
 	"github.com/go-pg/pg"
 	"upper.io/db.v3/postgresql"
 )
@@ -16,7 +18,7 @@ type GoPG struct {
 	db *pg.DB
 }
 
-func (g *GoPG) Connect(ds string) {
+func (g *GoPG) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if g.db != nil {
 		check(g.db.Close())
 		g.db = nil
@@ -26,6 +28,7 @@ func (g *GoPG) Connect(ds string) {
 	g.db = pg.Connect(&pg.Options{
 		User:     os.Getenv("USER"), // HACK
 		Database: url.Database,
+		PoolSize: openConns,
 	})
 }
 

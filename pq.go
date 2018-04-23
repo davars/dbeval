@@ -2,6 +2,7 @@ package dbeval
 
 import (
 	"database/sql"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -10,13 +11,16 @@ type PQ struct {
 	db *sql.DB
 }
 
-func (p *PQ) Connect(ds string) {
+func (p *PQ) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if p.db != nil {
 		check(p.db.Close())
 		p.db = nil
 	}
 	var err error
 	p.db, err = sql.Open("postgres", ds)
+	p.db.SetConnMaxLifetime(connLifetime)
+	p.db.SetMaxIdleConns(idleConns)
+	p.db.SetMaxOpenConns(openConns)
 	check(err)
 }
 

@@ -1,6 +1,8 @@
 package dbeval
 
 import (
+	"time"
+
 	"github.com/jackc/pgx"
 )
 
@@ -8,13 +10,13 @@ type PGX struct {
 	db *pgx.ConnPool
 }
 
-func (p *PGX) Connect(ds string) {
+func (p *PGX) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if p.db != nil {
 		p.db.Close()
 		p.db = nil
 	}
 	cc, err := pgx.ParseConnectionString(ds)
-	p.db, err = pgx.NewConnPool(pgx.ConnPoolConfig{ConnConfig: cc})
+	p.db, err = pgx.NewConnPool(pgx.ConnPoolConfig{ConnConfig: cc, MaxConnections: openConns})
 	check(err)
 }
 

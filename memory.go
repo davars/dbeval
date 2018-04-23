@@ -4,6 +4,8 @@ import (
 	"sort"
 	"sync"
 
+	"time"
+
 	_ "github.com/lib/pq"
 )
 
@@ -15,7 +17,7 @@ type Memory struct {
 	articlesByDate []*Article
 }
 
-func (m *Memory) Connect(ds string) {
+func (m *Memory) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	// Noop
 }
 

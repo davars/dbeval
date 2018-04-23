@@ -161,6 +161,7 @@ func impls() []Implementation {
 		&PGX{},
 		&PGXStdlib{},
 		&UpperDB{},
+		&UpperDBTrace{},
 		&SQLX{},
 		&Gorm{},
 		&DBR{},
@@ -174,13 +175,13 @@ func impls() []Implementation {
 }
 
 func withTestDB(impl Implementation, f func()) {
-	impl.Connect("sslmode=disable dbname=postgres")
+	impl.Connect("sslmode=disable dbname=postgres", 0, 0, 1)
 	impl.DropDatabase()
 	impl.CreateDatabase()
-	impl.Connect("sslmode=disable dbname=" + testDatabaseName)
+	impl.Connect("sslmode=disable dbname="+testDatabaseName, 0, 40, 40)
 	impl.CreateSchema()
 	defer func() {
-		impl.Connect("sslmode=disable dbname=postgres")
+		impl.Connect("sslmode=disable dbname=postgres", 0, 0, 1)
 		impl.DropDatabase()
 	}()
 	f()

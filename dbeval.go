@@ -25,7 +25,7 @@ func (Article) TableName() string {
 }
 
 type Implementation interface {
-	Connect(string)
+	Connect(string, time.Duration, int, int)
 	CreateDatabase()
 	DropDatabase()
 	CreateSchema()

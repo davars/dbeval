@@ -14,13 +14,16 @@ type DBR struct {
 	db *dbr.Session
 }
 
-func (p *DBR) Connect(ds string) {
+func (p *DBR) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if p.db != nil {
 		p.db.Close()
 		p.db = nil
 	}
 	conn, err := dbr.Open("postgres", ds, nil)
 	check(err)
+	conn.SetConnMaxLifetime(connLifetime)
+	conn.SetMaxIdleConns(idleConns)
+	conn.SetMaxOpenConns(openConns)
 	p.db = conn.NewSession(nil)
 }
 
