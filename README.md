@@ -29,14 +29,14 @@ to be the best approach for your problem.
 - [x] [upper.io/db.v3](https://godoc.org/upper.io/db.v3)
 - [x] [github.com/jmoiron/sqlx](https://godoc.org/github.com/jmoiron/sqlx)
 - [x] [github.com/jinzhu/gorm](https://godoc.org/github.com/jinzhu/gorm)
-- [x] [github.com/gobuffalo/pop](https://godoc.org/github.com/gobuffalo/pop)
 - [x] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
 - [x] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
 - [x] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
-- [x] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)
 
 ### PRs Welcome
 - [ ] [github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)
 - [ ] [gopkg.in/gorp.v2](https://godoc.org/gopkg.in/gorp.v2)
 - [ ] [github.com/jmoiron/modl](https://godoc.org/github.com/jmoiron/modl)
 - [ ] [gopkg.in/src-d/go-kallax.v1](https://godoc.org/gopkg.in/src-d/go-kallax.v1)
+- [ ] [github.com/gobuffalo/pop](https://godoc.org/github.com/gobuffalo/pop)
+- [ ] [github.com/volatiletech/sqlboiler](https://godoc.org/github.com/volatiletech/sqlboiler)
