@@ -1,6 +1,8 @@
 package dbeval
 
 import (
+	"database/sql"
+
 	"time"
 
 	"upper.io/db.v3"
@@ -9,6 +11,7 @@ import (
 )
 
 type UpperDB struct {
+	db       *sql.DB
 	sess     sqlbuilder.Database
 	authors  db.Collection
 	articles db.Collection
@@ -18,13 +21,16 @@ func (p *UpperDB) Connect(ds string, connLifetime time.Duration, idleConns, open
 	if p.sess != nil {
 		check(p.sess.Close())
 		p.sess = nil
+		check(p.db.Close())
+		p.db = nil
 	}
-	cs, err := postgresql.ParseURL(ds)
+	var err error
+	p.db, err = sql.Open("pgx", ds)
 	check(err)
-	p.sess, err = postgresql.Open(cs)
-	p.sess.SetConnMaxLifetime(connLifetime)
-	p.sess.SetMaxIdleConns(idleConns)
-	p.sess.SetMaxOpenConns(openConns)
+	p.db.SetConnMaxLifetime(connLifetime)
+	p.db.SetMaxIdleConns(idleConns)
+	p.db.SetMaxOpenConns(openConns)
+	p.sess, err = postgresql.New(p.db)
 	check(err)
 }
 

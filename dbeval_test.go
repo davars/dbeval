@@ -161,7 +161,6 @@ func impls() []Implementation {
 		&PGX{},
 		&PGXStdlib{},
 		&UpperDB{},
-		&UpperDBTrace{},
 		&SQLX{},
 		&Gorm{},
 		&DBR{},
