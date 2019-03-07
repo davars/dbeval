@@ -49,13 +49,13 @@ func (g *GoPG) CreateSchema() {
 
 func (g *GoPG) InsertAuthors(as []*Author) {
 	check(g.db.RunInTransaction(func(tx *pg.Tx) error {
-		return g.db.Insert(&as)
+		return tx.Insert(&as)
 	}))
 }
 
 func (g *GoPG) InsertArticles(as []*Article) {
 	check(g.db.RunInTransaction(func(tx *pg.Tx) error {
-		return g.db.Insert(&as)
+		return tx.Insert(&as)
 	}))
 }
 
