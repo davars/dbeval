@@ -64,3 +64,7 @@
 [[constraint]]
   name = "github.com/go-xorm/xorm"
   version = "0.6.5"
+
+[[constraint]]
+  name = "github.com/go-ozzo/ozzo-dbx"
+  version = "1.1.0"

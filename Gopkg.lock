@@ -3,17 +3,30 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:cc439e1d9d8cff3d575642f5401033b00f2b8d0cd9f859db45604701c990879a"
   name = "github.com/corpix/uarand"
   packages = ["."]
+  pruneopts = "UT"
   revision = "2b8494104d86337cdd41d0a49cbed8e4583c0ab4"
 
 [[projects]]
+  digest = "1:a2c1d0e43bd3baaa071d1b9ed72c27d78169b2b269f71c105ac4ba34b1be4a39"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
+  pruneopts = "UT"
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:320e16e019bf0e8c5cca95a7606e249dd3bfe27b0fed50161afd48010586f6a7"
+  name = "github.com/go-ozzo/ozzo-dbx"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e984ee904f1b2df904d0b2e6b2ca5064c87c0409"
+  version = "v1.1"
+
+[[projects]]
+  digest = "1:ab9f01cc2330d1001324d5c7bd0414cc0afad739d1b513bed980214a7fee089a"
   name = "github.com/go-pg/pg"
   packages = [
     ".",
@@ -21,45 +34,57 @@
     "internal/parser",
     "internal/pool",
     "orm",
-    "types"
+    "types",
   ]
+  pruneopts = "UT"
   revision = "5b73ce88484575f3480edf393237f6bf79d5f166"
   version = "v6.11.2"
 
 [[projects]]
+  digest = "1:620cd8069ce7fc8e5ffd4347f792b738ec4257e8f38aacf419dbcd9838d9efc9"
   name = "github.com/go-xorm/builder"
   packages = ["."]
+  pruneopts = "UT"
   revision = "a9b7ffcca3f0c6445c4e3b1bf72c01578817a6c3"
   version = "v0.1.0"
 
 [[projects]]
+  digest = "1:ee0b218753df985dd6633b13a894a69f0c1ea385f092f4afa093d407bb165cc5"
   name = "github.com/go-xorm/core"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f43c33d9a48db006417a7ac4c16b08897e3e1458"
   version = "v0.5.8"
 
 [[projects]]
+  digest = "1:c634cb4ee1049ad77cecd4e9904251d48bae4cc8248113e8f696557ce7abce6b"
   name = "github.com/go-xorm/xorm"
   packages = ["."]
+  pruneopts = "UT"
   revision = "e98616d6568c1845575a9112191745f071d9569a"
   version = "v0.6.5"
 
 [[projects]]
   branch = "master"
+  digest = "1:dc92772f0f288846267de088edebbb70c9e5e2c19fd0802badd162153e12391e"
   name = "github.com/gocraft/dbr"
   packages = [
     ".",
-    "dialect"
+    "dialect",
   ]
+  pruneopts = "UT"
   revision = "5d59a8b3aa915660960329efb3af5513e7a0db07"
 
 [[projects]]
   branch = "master"
+  digest = "1:22725c01ecd8ed0c0f0078944305a57053340d92878b02db925c660cc4accf64"
   name = "github.com/icrowley/fake"
   packages = ["."]
+  pruneopts = "UT"
   revision = "4178557ae428460c3780a381c824a1f3aceb6325"
 
 [[projects]]
+  digest = "1:d20ff0edad895612dfcfa5c53c0b24a2a7ae0929bc9559f8ffe549eb51093fe7"
   name = "github.com/jackc/pgx"
   packages = [
     ".",
@@ -68,64 +93,80 @@
     "pgio",
     "pgproto3",
     "pgtype",
-    "stdlib"
+    "stdlib",
   ]
+  pruneopts = "UT"
   revision = "da3231b0b66e2e74cdb779f1d46c5e958ba8be27"
   version = "v3.1.0"
 
 [[projects]]
+  digest = "1:6895fbe5a10c5aebd1965cac6f6905dcdb21bee01e08912d3ba6a805c2485f6a"
   name = "github.com/jinzhu/gorm"
   packages = [
     ".",
-    "dialects/postgres"
+    "dialects/postgres",
   ]
+  pruneopts = "UT"
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:fd97437fbb6b7dce04132cf06775bd258cce305c44add58eb55ca86c6c325160"
   name = "github.com/jinzhu/inflection"
   packages = ["."]
+  pruneopts = "UT"
   revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
   branch = "master"
+  digest = "1:7654989089e5bd5b6734ec3be8b695e87d3f1f8d95620b343fd7d3995a5b60d7"
   name = "github.com/jmoiron/sqlx"
   packages = [
     ".",
-    "reflectx"
+    "reflectx",
   ]
+  pruneopts = "UT"
   revision = "2aeb6a910c2b94f2d5eb53d9895d80e27264ec41"
 
 [[projects]]
   branch = "master"
+  digest = "1:02a3ca483a7a6074dbde98bd21aca36fd7ee68224b6766e052ff864e851f8b9b"
   name = "github.com/lib/pq"
   packages = [
     ".",
     "hstore",
-    "oid"
+    "oid",
   ]
+  pruneopts = "UT"
   revision = "d34b9ff171c21ad295489235aec8b6626023cd04"
 
 [[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
   name = "github.com/pkg/errors"
   packages = ["."]
+  pruneopts = "UT"
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
 [[projects]]
+  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
+  pruneopts = "UT"
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:f85e109eda8f6080877185d1c39e98dd8795e1780c08beca28304b87fd855a1c"
   name = "github.com/stretchr/testify"
   packages = ["assert"]
+  pruneopts = "UT"
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
   version = "v1.2.1"
 
 [[projects]]
+  digest = "1:b7f13d37e56a16267a50837ba9e7d9f8fc5d4572a608a4e4892a55f0cfcaa31d"
   name = "upper.io/db.v3"
   packages = [
     ".",
@@ -137,14 +178,31 @@
     "internal/sqladapter/exql",
     "lib/reflectx",
     "lib/sqlbuilder",
-    "postgresql"
+    "postgresql",
   ]
+  pruneopts = "UT"
   revision = "bba00b389f7e9cfdd8988e08c2832ab39119d7cf"
   version = "v3.5.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6364d609b86d3d020ae9c94811fb9d18ee82723eca491b1ccd57b94044c892c4"
+  input-imports = [
+    "github.com/go-ozzo/ozzo-dbx",
+    "github.com/go-pg/pg",
+    "github.com/go-xorm/xorm",
+    "github.com/gocraft/dbr",
+    "github.com/icrowley/fake",
+    "github.com/jackc/pgx",
+    "github.com/jackc/pgx/stdlib",
+    "github.com/jinzhu/gorm",
+    "github.com/jinzhu/gorm/dialects/postgres",
+    "github.com/jmoiron/sqlx",
+    "github.com/lib/pq",
+    "github.com/stretchr/testify/assert",
+    "upper.io/db.v3",
+    "upper.io/db.v3/lib/sqlbuilder",
+    "upper.io/db.v3/postgresql",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
