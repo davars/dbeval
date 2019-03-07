@@ -32,6 +32,7 @@ to be the best approach for your problem.
 - [x] [github.com/gocraft/dbr](https://godoc.org/github.com/gocraft/dbr)
 - [x] [github.com/go-xorm/xorm](https://godoc.org/github.com/go-xorm/xorm)
 - [x] [github.com/go-pg/pg](https://godoc.org/github.com/go-pg/pg)
+- [x] [github.com/go-ozzo/ozzo-dbx](https://godoc.org/github.com/go-ozzo/ozzo-dbx)
 
 ### PRs Welcome
 - [ ] [github.com/astaxie/beego/orm](https://godoc.org/github.com/astaxie/beego/orm)
