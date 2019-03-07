@@ -8,6 +8,10 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 )
 
+// Notes:
+// - not accepting slice-of-pointer-to-struct is annoying
+// - no bulk insert :(
+
 type Ozzo struct {
 	db *dbx.DB
 }
