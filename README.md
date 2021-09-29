@@ -5,7 +5,7 @@ Runs benchmarks on the same "typical" database workflow implemented in various w
 
 #### [Latest Results](https://github.com/davars/dbeval/blob/master/results.txt)
 
-## Warning: calls `DROP DATABASE` on local postgres instance! 
+## ⚠️ Warning: calls `DROP DATABASE` on local postgres instance! ⚠️
 
 ```
 # Run benchmarks
