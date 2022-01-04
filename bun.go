@@ -28,7 +28,7 @@ func (b *Bun) Connect(ds string, connLifetime time.Duration, idleConns, openConn
 	url, err := postgresql.ParseURL(ds)
 	check(err)
 	sqldb := sql.OpenDB(
-		pgdriver.NewConnector(pgdriver.WithDatabase(url.Database), pgdriver.WithUser(os.Getenv("USER"))))
+		pgdriver.NewConnector(pgdriver.WithDatabase(url.Database), pgdriver.WithUser(os.Getenv("USER")), pgdriver.WithInsecure(true)))
 
 	b.db = bun.NewDB(sqldb, pgdialect.New())
 	b.db.SetConnMaxLifetime(connLifetime)
