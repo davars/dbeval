@@ -1,11 +1,14 @@
 package dbeval
 
 import (
+	"github.com/uptrace/bun"
 	"time"
 )
 
 type Author struct {
-	ID   int64  `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'"`
+	bun.BaseModel `bun:"table:authors,alias:au" xorm:"-"`
+
+	ID   int64  `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'" bun:"id,pk,autoincrement"`
 	Name string `db:"name"`
 }
 
@@ -14,7 +17,9 @@ func (Author) TableName() string {
 }
 
 type Article struct {
-	ID          int64     `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'"`
+	bun.BaseModel `bun:"table:articles,alias:ar" xorm:"-"`
+
+	ID          int64     `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'" bun:"id,pk,autoincrement"`
 	Title       string    `db:"title"`
 	Body        string    `db:"body"`
 	PublishedAt time.Time `db:"published_at"`
