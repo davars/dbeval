@@ -15,6 +15,10 @@ type UpperDB struct {
 	articles db.Collection
 }
 
+func init() {
+	db.LC().SetLevel(db.LogLevelError)
+}
+
 func (p *UpperDB) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if p.sess != nil {
 		check(p.sess.Close())
