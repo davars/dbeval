@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/upper/db/v4/adapter/postgresql"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
-	"upper.io/db.v3/postgresql"
 )
 
 // Notes:

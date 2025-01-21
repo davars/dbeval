@@ -2,17 +2,15 @@ package dbeval
 
 import (
 	"database/sql"
-
 	"time"
 
-	"upper.io/db.v3"
-	"upper.io/db.v3/lib/sqlbuilder"
-	"upper.io/db.v3/postgresql"
+	"github.com/upper/db/v4"
+	"github.com/upper/db/v4/adapter/postgresql"
 )
 
 type UpperDB struct {
 	db       *sql.DB
-	sess     sqlbuilder.Database
+	sess     db.Session
 	authors  db.Collection
 	articles db.Collection
 }
@@ -35,24 +33,24 @@ func (p *UpperDB) Connect(ds string, connLifetime time.Duration, idleConns, open
 }
 
 func (p *UpperDB) CreateDatabase() {
-	_, err := p.sess.Exec(createdb)
+	_, err := p.sess.SQL().Exec(createdb)
 	check(err)
 }
 
 func (p *UpperDB) DropDatabase() {
-	_, err := p.sess.Exec(dropdb)
+	_, err := p.sess.SQL().Exec(dropdb)
 	check(err)
 }
 
 func (p *UpperDB) CreateSchema() {
-	_, err := p.sess.Exec(schema)
+	_, err := p.sess.SQL().Exec(schema)
 	check(err)
 	p.authors = p.sess.Collection("authors")
 	p.articles = p.sess.Collection("articles")
 }
 
 func (p *UpperDB) InsertAuthors(as []*Author) {
-	batch := p.sess.InsertInto("authors").Batch(len(as))
+	batch := p.sess.SQL().InsertInto("authors").Batch(len(as))
 	for _, a := range as {
 		batch = batch.Values(a)
 	}
@@ -61,7 +59,7 @@ func (p *UpperDB) InsertAuthors(as []*Author) {
 }
 
 func (p *UpperDB) InsertArticles(as []*Article) {
-	batch := p.sess.InsertInto("articles").Batch(len(as))
+	batch := p.sess.SQL().InsertInto("articles").Batch(len(as))
 	for _, a := range as {
 		batch = batch.Values(a)
 	}

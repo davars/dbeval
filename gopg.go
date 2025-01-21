@@ -2,11 +2,10 @@ package dbeval
 
 import (
 	"os"
-
 	"time"
 
 	"github.com/go-pg/pg"
-	"upper.io/db.v3/postgresql"
+	"github.com/upper/db/v4/adapter/postgresql"
 )
 
 // Notes:
