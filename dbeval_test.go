@@ -18,11 +18,11 @@ func TestImplementations(t *testing.T) {
 	}
 }
 
-func BenchmarkInsert(b *testing.B) {
+func BenchmarkInsertAuthors(b *testing.B) {
 	var next int64
 
 	for _, impl := range impls() {
-		b.Run(fmt.Sprintf("%T/Authors", impl), func(b *testing.B) {
+		b.Run(fmt.Sprintf("%T", impl), func(b *testing.B) {
 			withTestDB(impl, func() {
 				b.ReportAllocs()
 				b.ResetTimer()
@@ -40,9 +40,13 @@ func BenchmarkInsert(b *testing.B) {
 	}
 
 	fmt.Println()
+}
+
+func BenchmarkInsertArticles(b *testing.B) {
+	var next int64
 
 	for _, impl := range impls() {
-		b.Run(fmt.Sprintf("%T/Articles", impl), func(b *testing.B) {
+		b.Run(fmt.Sprintf("%T", impl), func(b *testing.B) {
 			withTestDB(impl, func() {
 				b.ReportAllocs()
 				b.ResetTimer()
