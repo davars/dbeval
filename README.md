@@ -34,6 +34,7 @@ to be the best approach for your problem.
 - [x] [github.com/go-pg/pg](https://pkg.go.dev/github.com/go-pg/pg)
 - [x] [github.com/go-ozzo/ozzo-dbx](https://pkg.go.dev/github.com/go-ozzo/ozzo-dbx)
 - [x] [https://github.com/uptrace/bun](https://pkg.go.dev/github.com/uptrace/bun)
+- [x] [https://sqlc.dev/](https://sqlc.dev/)
 
 ### PRs Welcome
 - [ ] [github.com/astaxie/beego/orm](https://pkg.go.dev/github.com/astaxie/beego/orm)
