@@ -2,10 +2,9 @@ package dbeval
 
 import (
 	"database/sql"
-
 	"time"
 
-	_ "github.com/jackc/pgx/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type PGXStdlib struct {

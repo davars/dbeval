@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-ozzo/ozzo-dbx"
 
-	_ "github.com/jackc/pgx/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 // Notes:
