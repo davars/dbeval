@@ -24,9 +24,9 @@ to be the best approach for your problem.
 
 ### Implementated
 - [x] [github.com/lib/pq](https://pkg.go.dev/github.com/lib/pq)
-- [x] [github.com/jackc/pgx](https://pkg.go.dev/github.com/jackc/pgx)
-- [x] [github.com/jackc/pgx/stdlib](https://pkg.go.dev/github.com/jackc/pgx/stdlib)
-- [x] [upper.io/db.v3](https://pkg.go.dev/upper.io/db.v3)
+- [x] [github.com/jackc/v5/pgx](https://pkg.go.dev/github.com/jackc/pgx/v5)
+- [x] [github.com/jackc/pgx/v5/stdlib](https://pkg.go.dev/github.com/jackc/pgx/v5/stdlib)
+- [x] [github.com/upper/db/v4](https://pkg.go.dev/github.com/upper/db/v4)
 - [x] [github.com/jmoiron/sqlx](https://pkg.go.dev/github.com/jmoiron/sqlx)
 - [x] [github.com/jinzhu/gorm](https://pkg.go.dev/github.com/jinzhu/gorm)
 - [x] [github.com/gocraft/dbr](https://pkg.go.dev/github.com/gocraft/dbr)
