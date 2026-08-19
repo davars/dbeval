@@ -1,8 +1,6 @@
 module github.com/davars/dbeval
 
-go 1.23.0
-
-toolchain go1.23.3
+go 1.25.0
 
 require (
 	entgo.io/ent v0.14.1
@@ -11,7 +9,7 @@ require (
 	github.com/go-xorm/xorm v0.7.9
 	github.com/gocraft/dbr v0.0.0-20190714181702-8114670a83bd
 	github.com/icrowley/fake v0.0.0-20240710202011-f797eb4a99c0
-	github.com/jackc/pgx/v5 v5.7.2
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.12.3
@@ -47,11 +45,11 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
-	golang.org/x/mod v0.20.0 // indirect
+	golang.org/x/mod v0.27.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mellium.im/sasl v0.3.2 // indirect
 	xorm.io/builder v0.3.13 // indirect
