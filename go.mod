@@ -14,7 +14,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/lib/pq v1.10.9
+	github.com/lib/pq v1.12.3
 	github.com/stretchr/testify v1.10.0
 	github.com/upper/db/v4 v4.9.0
 	github.com/uptrace/bun v1.2.8
