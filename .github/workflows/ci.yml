@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # The GitHub-hosted runner ships PostgreSQL preinstalled but not
+      # running. The implementations under test (see e.g. bun.go) connect
+      # as the local OS user against a local instance, per the README, so
+      # give that user a trust-authenticated superuser role rather than
+      # standing up a separate password-authenticated service container.
+      - name: Start local PostgreSQL for the runner user
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres createuser --superuser "$USER"
+          sudo -u postgres psql -c "ALTER ROLE \"$USER\" WITH PASSWORD NULL;"
+
+          hba_file=$(sudo -u postgres psql -tAc "SHOW hba_file;")
+          sudo sed -i \
+            -e 's/^\(local\s\+all\s\+all\s\+\)peer/\1trust/' \
+            -e 's/^\(host\s\+all\s\+all\s\+127\.0\.0\.1\/32\s\+\)scram-sha-256/\1trust/' \
+            -e 's/^\(host\s\+all\s\+all\s\+::1\/128\s\+\)scram-sha-256/\1trust/' \
+            "$hba_file"
+          sudo systemctl restart postgresql.service
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify go.mod/go.sum are tidy
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test -v ./...
