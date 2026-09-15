@@ -9,7 +9,7 @@ require (
 	github.com/go-xorm/xorm v0.7.9
 	github.com/gocraft/dbr v0.0.0-20190714181702-8114670a83bd
 	github.com/icrowley/fake v0.0.0-20240710202011-f797eb4a99c0
-	github.com/jackc/pgx/v5 v5.10.0
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.12.3
