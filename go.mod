@@ -15,7 +15,7 @@ require (
 	github.com/lib/pq v1.12.3
 	github.com/stretchr/testify v1.12.0
 	github.com/upper/db/v4 v4.10.0
-	github.com/uptrace/bun v1.2.18
+	github.com/uptrace/bun v1.3.0
 	github.com/uptrace/bun/dialect/pgdialect v1.2.18
 	github.com/uptrace/bun/driver/pgdriver v1.2.18
 )
