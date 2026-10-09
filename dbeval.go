@@ -2,6 +2,9 @@ package dbeval
 
 import (
 	_ "embed"
+	"net"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/uptrace/bun"
@@ -58,4 +61,22 @@ func check(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// pgAddr returns the network and address of the postgres server named by the
+// PGHOST and PGPORT environment variables (defaulting to localhost:5432), for
+// drivers that don't read them on their own.  A PGHOST starting with "/" is a
+// unix socket directory.
+func pgAddr() (network, addr string) {
+	host, port := os.Getenv("PGHOST"), os.Getenv("PGPORT")
+	if host == "" {
+		host = "localhost"
+	}
+	if port == "" {
+		port = "5432"
+	}
+	if strings.HasPrefix(host, "/") {
+		return "unix", host + "/.s.PGSQL." + port
+	}
+	return "tcp", net.JoinHostPort(host, port)
 }

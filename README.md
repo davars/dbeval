@@ -34,6 +34,7 @@ to be the best approach for your problem.
 - [x] [github.com/go-pg/pg/v10](https://pkg.go.dev/github.com/go-pg/pg/v10)
 - [x] [github.com/go-ozzo/ozzo-dbx](https://pkg.go.dev/github.com/go-ozzo/ozzo-dbx)
 - [x] [https://github.com/uptrace/bun](https://pkg.go.dev/github.com/uptrace/bun)
+- [x] [https://github.com/uptrace/bun](https://pkg.go.dev/github.com/uptrace/bun) on the pgx stdlib driver
 - [x] [https://sqlc.dev/](https://sqlc.dev/)
 
 ### PRs Welcome

@@ -25,7 +25,10 @@ func (g *GoPG) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 	}
 	url, err := postgresql.ParseURL(ds)
 	check(err)
+	network, addr := pgAddr()
 	g.db = pg.Connect(&pg.Options{
+		Network:  network,
+		Addr:     addr,
 		User:     os.Getenv("USER"), // HACK
 		Database: url.Database,
 		PoolSize: openConns,

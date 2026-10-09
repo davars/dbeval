@@ -172,6 +172,7 @@ func impls() []Implementation {
 		&Xorm{},
 		&Ozzo{},
 		&Bun{},
+		&BunPGX{},
 		&Ent{},
 		&SQLC{},
 	}
