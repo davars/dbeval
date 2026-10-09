@@ -79,7 +79,7 @@ func (b *Bun) FindAuthorsByName(name string) []*Author {
 
 func (b *Bun) RecentArticles(n int) []*Article {
 	var as []*Article
-	check(b.db.NewSelect().Model(&as).Order("published_at DESC").Limit(n).Scan(context.Background()))
+	check(b.db.NewSelect().Model(&as).Order("published_at DESC").Limit(int64(n)).Scan(context.Background()))
 	return as
 }
 
