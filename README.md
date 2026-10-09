@@ -31,7 +31,7 @@ to be the best approach for your problem.
 - [x] [github.com/jinzhu/gorm](https://pkg.go.dev/github.com/jinzhu/gorm)
 - [x] [github.com/gocraft/dbr](https://pkg.go.dev/github.com/gocraft/dbr)
 - [x] [github.com/go-xorm/xorm](https://pkg.go.dev/github.com/go-xorm/xorm)
-- [x] [github.com/go-pg/pg](https://pkg.go.dev/github.com/go-pg/pg)
+- [x] [github.com/go-pg/pg/v10](https://pkg.go.dev/github.com/go-pg/pg/v10)
 - [x] [github.com/go-ozzo/ozzo-dbx](https://pkg.go.dev/github.com/go-ozzo/ozzo-dbx)
 - [x] [https://github.com/uptrace/bun](https://pkg.go.dev/github.com/uptrace/bun)
 - [x] [https://sqlc.dev/](https://sqlc.dev/)
