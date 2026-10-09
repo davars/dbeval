@@ -2,6 +2,9 @@ package dbeval
 
 import (
 	_ "embed"
+	"net"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/uptrace/bun"
@@ -10,7 +13,7 @@ import (
 type Author struct {
 	bun.BaseModel `bun:"table:authors,alias:au" xorm:"-"`
 
-	ID   int64  `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'" bun:"id,pk,autoincrement"`
+	ID   int64  `db:"id" gorm:"primaryKey" xorm:"'id'" bun:"id,pk,autoincrement"`
 	Name string `db:"name"`
 }
 
@@ -21,7 +24,7 @@ func (Author) TableName() string {
 type Article struct {
 	bun.BaseModel `bun:"table:articles,alias:ar" xorm:"-"`
 
-	ID          int64     `db:"id" gorm:"PRIMARY_KEY" xorm:"'id'" bun:"id,pk,autoincrement"`
+	ID          int64     `db:"id" gorm:"primaryKey" xorm:"'id'" bun:"id,pk,autoincrement"`
 	Title       string    `db:"title"`
 	Body        string    `db:"body"`
 	PublishedAt time.Time `db:"published_at"`
@@ -58,4 +61,22 @@ func check(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// pgAddr returns the network and address of the postgres server named by the
+// PGHOST and PGPORT environment variables (defaulting to localhost:5432), for
+// drivers that don't read them on their own.  A PGHOST starting with "/" is a
+// unix socket directory.
+func pgAddr() (network, addr string) {
+	host, port := os.Getenv("PGHOST"), os.Getenv("PGPORT")
+	if host == "" {
+		host = "localhost"
+	}
+	if port == "" {
+		port = "5432"
+	}
+	if strings.HasPrefix(host, "/") {
+		return "unix", host + "/.s.PGSQL." + port
+	}
+	return "tcp", net.JoinHostPort(host, port)
 }

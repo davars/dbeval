@@ -3,8 +3,8 @@ package dbeval
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 // Notes:
@@ -16,15 +16,19 @@ type Gorm struct {
 
 func (g *Gorm) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
 	if g.db != nil {
-		check(g.db.Close())
+		sqlDB, err := g.db.DB()
+		check(err)
+		check(sqlDB.Close())
 		g.db = nil
 	}
 	var err error
-	g.db, err = gorm.Open("postgres", ds)
+	g.db, err = gorm.Open(postgres.Open(ds), &gorm.Config{})
 	check(err)
-	g.db.DB().SetConnMaxLifetime(connLifetime)
-	g.db.DB().SetMaxIdleConns(idleConns)
-	g.db.DB().SetMaxOpenConns(openConns)
+	sqlDB, err := g.db.DB()
+	check(err)
+	sqlDB.SetConnMaxLifetime(connLifetime)
+	sqlDB.SetMaxIdleConns(idleConns)
+	sqlDB.SetMaxOpenConns(openConns)
 }
 
 func (g *Gorm) CreateDatabase() {
