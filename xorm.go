@@ -3,8 +3,8 @@ package dbeval
 import (
 	"time"
 
-	"github.com/go-xorm/xorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/lib/pq"
+	"xorm.io/xorm"
 )
 
 type Xorm struct {
