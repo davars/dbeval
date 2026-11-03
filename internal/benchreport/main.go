@@ -30,6 +30,15 @@ var reference = map[string]bool{"Memory": true}
 // benchmarkOrder and descriptions document the workloads in dbeval_test.go.
 var benchmarkOrder = []string{"InsertAuthors", "InsertArticles", "FindAuthorByID", "FindAuthorByName", "RecentArticles"}
 
+// categories group benchmarks for the Reads and Writes averages.
+var categories = []struct {
+	name    string
+	benches []string
+}{
+	{"Reads", []string{"FindAuthorByID", "FindAuthorByName", "RecentArticles"}},
+	{"Writes", []string{"InsertAuthors", "InsertArticles"}},
+}
+
 var descriptions = map[string]string{
 	"InsertAuthors":    "insert a batch of 10 authors",
 	"InsertArticles":   "insert a batch of 10 articles with multi-paragraph bodies",
@@ -150,12 +159,45 @@ func (res *results) benchmarks() []string {
 	return append(known, other...)
 }
 
-// row is one implementation's medians in one benchmark.
+// estimate is a central value with the range it could plausibly take given run-to-run variation.
+type estimate struct{ mid, lo, hi float64 }
+
+func (e estimate) overlaps(o estimate) bool { return e.lo <= o.hi && o.lo <= e.hi }
+
+// tieRanks returns competition ranks for estimates sorted by mid, marking ties with "=" (e.g. 1, =2, =2, 4). An
+// estimate is tied with the group before it when its range overlaps the range of that group's first (fastest)
+// member: at these run counts, the two can't be told apart.
+func tieRanks(es []estimate) []string {
+	start := make([]int, len(es))
+	for i := range es {
+		if i > 0 && es[i].overlaps(es[start[i-1]]) {
+			start[i] = start[i-1]
+		} else {
+			start[i] = i
+		}
+	}
+	size := map[int]int{}
+	for _, g := range start {
+		size[g]++
+	}
+	ranks := make([]string, len(es))
+	for i, g := range start {
+		ranks[i] = strconv.Itoa(g + 1)
+		if size[g] > 1 {
+			ranks[i] = "=" + ranks[i]
+		}
+	}
+	return ranks
+}
+
+// row is one implementation's results in one benchmark.
 type row struct {
 	impl                string
 	ns, bytes, allocs   float64
-	spread, relative    float64
+	spread              float64
+	relative            estimate // median, fastest and slowest run, relative to the fastest implementation's median
 	isReference, hasMem bool
+	minNS, maxNS        float64
 }
 
 // rows returns bench's implementations sorted fastest first (reference implementations last), with times relative
@@ -167,6 +209,8 @@ func (res *results) rows(bench string) []row {
 		r := row{
 			impl:        impl,
 			ns:          median(s.ns),
+			minNS:       slices.Min(s.ns),
+			maxNS:       slices.Max(s.ns),
 			spread:      spread(s.ns),
 			isReference: reference[impl],
 			hasMem:      len(s.allocs) > 0,
@@ -180,7 +224,7 @@ func (res *results) rows(bench string) []row {
 		rs = append(rs, r)
 	}
 	for i := range rs {
-		rs[i].relative = rs[i].ns / best
+		rs[i].relative = estimate{rs[i].ns / best, rs[i].minNS / best, rs[i].maxNS / best}
 	}
 	sort.Slice(rs, func(i, j int) bool {
 		if rs[i].isReference != rs[j].isReference {
@@ -189,6 +233,33 @@ func (res *results) rows(bench string) []row {
 		return rs[i].ns < rs[j].ns
 	})
 	return rs
+}
+
+// average is the geometric mean of relative times, the right average for ratios: each benchmark counts equally
+// however long it takes, and the ranking doesn't depend on which implementation the ratios are relative to. Its range
+// runs from the average of each benchmark's fastest run to the average of each benchmark's slowest.
+func average(es []estimate) estimate {
+	var mid, lo, hi []float64
+	for _, e := range es {
+		mid, lo, hi = append(mid, e.mid), append(lo, e.lo), append(hi, e.hi)
+	}
+	return estimate{geomean(mid), geomean(lo), geomean(hi)}
+}
+
+func ordinal(rank string) string {
+	n := strings.TrimPrefix(rank, "=")
+	suffix := "th"
+	if i, err := strconv.Atoi(n); err == nil && (i%100 < 11 || i%100 > 13) {
+		switch i % 10 {
+		case 1:
+			suffix = "st"
+		case 2:
+			suffix = "nd"
+		case 3:
+			suffix = "rd"
+		}
+	}
+	return rank + suffix
 }
 
 // formatDuration formats ns with three significant figures, e.g. 8.10µs, 35.0µs, 275µs.
@@ -264,12 +335,14 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 	fmt.Fprintln(w, "compare implementations within this report rather than absolute numbers across reports.")
 	fmt.Fprintln(w)
 
-	// Summary: each implementation's relative time per benchmark, averaged (geometric mean, the right average for
-	// ratios) across benchmarks.
+	// Summary: each implementation's relative time per benchmark, and averages across all benchmarks and per
+	// category.
 	type summary struct {
 		impl     string
-		relative map[string]float64
-		mean     float64
+		relative map[string]estimate
+		overall  estimate
+		category map[string]estimate
+		catRank  map[string]string
 	}
 	byImpl := map[string]*summary{}
 	for _, b := range benches {
@@ -279,7 +352,7 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 			}
 			s := byImpl[r.impl]
 			if s == nil {
-				s = &summary{impl: r.impl, relative: map[string]float64{}}
+				s = &summary{impl: r.impl, relative: map[string]estimate{}, category: map[string]estimate{}, catRank: map[string]string{}}
 				byImpl[r.impl] = s
 			}
 			s.relative[b] = r.relative
@@ -287,34 +360,104 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 	}
 	var sums []*summary
 	for _, s := range byImpl {
-		var xs []float64
-		for _, x := range s.relative {
-			xs = append(xs, x)
+		var all []estimate
+		for _, b := range benches {
+			if e, ok := s.relative[b]; ok {
+				all = append(all, e)
+			}
 		}
-		s.mean = geomean(xs)
+		s.overall = average(all)
 		sums = append(sums, s)
 	}
-	sort.Slice(sums, func(i, j int) bool { return sums[i].mean < sums[j].mean })
+
+	// Categories only apply when all their benchmarks ran.
+	var cats []string
+	catBenches := map[string][]string{}
+	for _, c := range categories {
+		if !slices.ContainsFunc(c.benches, func(b string) bool { return res.data[b] == nil }) {
+			cats = append(cats, c.name)
+			catBenches[c.name] = c.benches
+		}
+	}
+	for _, c := range cats {
+		for _, s := range sums {
+			var es []estimate
+			for _, b := range catBenches[c] {
+				if e, ok := s.relative[b]; ok {
+					es = append(es, e)
+				}
+			}
+			if len(es) > 0 {
+				s.category[c] = average(es)
+			}
+		}
+		sort.Slice(sums, func(i, j int) bool { return sums[i].category[c].mid < sums[j].category[c].mid })
+		var es []estimate
+		for _, s := range sums {
+			es = append(es, s.category[c])
+		}
+		for i, rank := range tieRanks(es) {
+			sums[i].catRank[c] = rank
+		}
+	}
+
+	sort.Slice(sums, func(i, j int) bool { return sums[i].overall.mid < sums[j].overall.mid })
+	var overall []estimate
+	for _, s := range sums {
+		overall = append(overall, s.overall)
+	}
+	ranks := tieRanks(overall)
 
 	fmt.Fprintln(w, "## Summary")
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Implementations ranked by their average relative time across all benchmarks (geometric mean of the")
-	fmt.Fprintln(w, "per-benchmark **×** values, so each benchmark counts equally regardless of how long it takes).")
+	fmt.Fprintf(w, "Implementations are ranked by **Overall**: the geometric mean of their per-benchmark **×** values, so each\n")
+	fmt.Fprintf(w, "of the %d benchmarks counts equally however long it takes.", len(benches))
+	if len(cats) > 0 {
+		var parts []string
+		for _, c := range categories {
+			if catBenches[c.name] != nil {
+				parts = append(parts, fmt.Sprintf("**%s** averages %s", c.name, strings.Join(c.benches, ", ")))
+			}
+		}
+		fmt.Fprintf(w, " %s, each with the rank it alone would give. Equal weighting per benchmark means the\n", strings.Join(parts, "; "))
+		fmt.Fprintln(w, "category with more benchmarks has more say in Overall, so check the category your workload resembles.")
+	} else {
+		fmt.Fprintln(w)
+	}
 	fmt.Fprintln(w)
-	fmt.Fprint(w, "| # | Implementation | **Average** |")
+	fmt.Fprintln(w, "A rank marked **=** is a tie: the implementation's range of runs overlaps that of the fastest implementation")
+	fmt.Fprintln(w, "in its group, so these runs can't tell them apart. An average's range runs from the average of each")
+	fmt.Fprintln(w, "benchmark's fastest run to the average of each benchmark's slowest.")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "What this measures: time only (memory and allocations are in the per-benchmark tables), as end-to-end")
+	fmt.Fprintln(w, "latency against a PostgreSQL server on the same machine. Server work is included, so where it dominates (the")
+	fmt.Fprintln(w, "inserts) differences in library overhead look smaller, and a remote database would add weight to round")
+	fmt.Fprintln(w, "trips. Each implementation runs with the driver, protocol and bulk-insert method chosen in its source file.")
+	fmt.Fprintln(w)
+	fmt.Fprint(w, "| # | Implementation | **Overall** |")
+	for _, c := range cats {
+		fmt.Fprintf(w, " %s |", c)
+	}
 	for _, b := range benches {
 		fmt.Fprintf(w, " %s |", b)
 	}
 	fmt.Fprint(w, "\n|--:|---|--:|")
-	for range benches {
+	for range len(cats) + len(benches) {
 		fmt.Fprint(w, "--:|")
 	}
 	fmt.Fprintln(w)
 	for i, s := range sums {
-		fmt.Fprintf(w, "| %d | %s | **%s** |", i+1, s.impl, formatRelative(s.mean))
+		fmt.Fprintf(w, "| %s | %s | **%s** |", ranks[i], s.impl, formatRelative(s.overall.mid))
+		for _, c := range cats {
+			if e, ok := s.category[c]; ok {
+				fmt.Fprintf(w, " %s (%s) |", formatRelative(e.mid), ordinal(s.catRank[c]))
+			} else {
+				fmt.Fprint(w, " — |")
+			}
+		}
 		for _, b := range benches {
-			if x, ok := s.relative[b]; ok {
-				fmt.Fprintf(w, " %s |", formatRelative(x))
+			if e, ok := s.relative[b]; ok {
+				fmt.Fprintf(w, " %s |", formatRelative(e.mid))
 			} else {
 				fmt.Fprint(w, " — |")
 			}
@@ -330,14 +473,20 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 		}
 		fmt.Fprintln(w, "| # | Implementation | Time/op | ± | × | Memory/op | Allocs/op |")
 		fmt.Fprintln(w, "|--:|---|--:|--:|--:|--:|--:|")
-		rank := 0
-		for _, r := range res.rows(b) {
+		rs := res.rows(b)
+		var es []estimate
+		for _, r := range rs {
+			if !r.isReference {
+				es = append(es, r.relative)
+			}
+		}
+		ranks := tieRanks(es)
+		for i, r := range rs {
 			pos := "ref"
 			rel := "—"
 			if !r.isReference {
-				rank++
-				pos = strconv.Itoa(rank)
-				rel = formatRelative(r.relative)
+				pos = ranks[i]
+				rel = formatRelative(r.relative.mid)
 			}
 			sp := "—"
 			if !math.IsNaN(r.spread) {
