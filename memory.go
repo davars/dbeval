@@ -1,12 +1,9 @@
 package dbeval
 
 import (
-	"sort"
+	"slices"
 	"sync"
-
 	"time"
-
-	_ "github.com/lib/pq"
 )
 
 type Memory struct {
@@ -14,7 +11,8 @@ type Memory struct {
 	authors        map[int64]*Author
 	authorsByName  map[string][]*Author
 	articles       map[int64]*Article
-	articlesByDate []*Article
+	articlesByDate []*Article // newest first once sorted
+	unsorted       bool       // articlesByDate has appends since it was last sorted
 }
 
 func (m *Memory) Connect(ds string, connLifetime time.Duration, idleConns, openConns int) {
@@ -28,6 +26,7 @@ func (m *Memory) CreateDatabase() {
 	m.authorsByName = map[string][]*Author{}
 	m.articles = map[int64]*Article{}
 	m.articlesByDate = nil
+	m.unsorted = false
 }
 
 func (m *Memory) DropDatabase() {
@@ -53,10 +52,9 @@ func (m *Memory) InsertArticles(as []*Article) {
 	for _, a := range as {
 		m.articles[a.ID] = a
 	}
+	// Sort lazily on the next read rather than on every insert.
 	m.articlesByDate = append(m.articlesByDate, as...)
-	sort.Slice(m.articlesByDate, func(i, j int) bool {
-		return m.articlesByDate[i].PublishedAt.After(m.articlesByDate[j].PublishedAt)
-	})
+	m.unsorted = true
 }
 
 func (m *Memory) FindAuthorByID(id int64) *Author {
@@ -73,8 +71,20 @@ func (m *Memory) FindAuthorsByName(name string) []*Author {
 
 func (m *Memory) RecentArticles(n int) []*Article {
 	m.RLock()
+	if m.unsorted {
+		m.RUnlock()
+		m.Lock()
+		if m.unsorted {
+			slices.SortStableFunc(m.articlesByDate, func(a, b *Article) int {
+				return b.PublishedAt.Compare(a.PublishedAt)
+			})
+			m.unsorted = false
+		}
+		m.Unlock()
+		m.RLock()
+	}
 	defer m.RUnlock()
-	return m.articlesByDate[0:n]
+	return m.articlesByDate[:min(n, len(m.articlesByDate))]
 }
 
 var _ Implementation = &Memory{}

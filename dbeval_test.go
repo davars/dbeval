@@ -3,7 +3,7 @@ package dbeval
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -18,8 +18,17 @@ func TestImplementations(t *testing.T) {
 	}
 }
 
+// poolSize is how many distinct fake values the insert benchmarks cycle through. The values are generated before
+// the timer starts: fake's text generation is slow enough (~470µs for 10 article bodies) that generating inside the
+// loop dominated the measurement.
+const poolSize = 1000
+
 func BenchmarkInsertAuthors(b *testing.B) {
 	var next int64
+	names := make([]string, poolSize)
+	for i := range names {
+		names[i] = fake.FullName()
+	}
 
 	for _, impl := range impls() {
 		b.Run(fmt.Sprintf("%T", impl), func(b *testing.B) {
@@ -30,7 +39,8 @@ func BenchmarkInsertAuthors(b *testing.B) {
 					for pb.Next() {
 						authors := make([]*Author, 10)
 						for i := range authors {
-							authors[i] = &Author{ID: atomic.AddInt64(&next, 1), Name: fake.FullName()}
+							id := atomic.AddInt64(&next, 1)
+							authors[i] = &Author{ID: id, Name: names[id%poolSize]}
 						}
 						impl.InsertAuthors(authors)
 					}
@@ -44,6 +54,14 @@ func BenchmarkInsertAuthors(b *testing.B) {
 
 func BenchmarkInsertArticles(b *testing.B) {
 	var next int64
+	pool := make([]Article, poolSize)
+	for i := range pool {
+		pool[i] = Article{
+			Title:       fake.Title(),
+			Body:        fake.EmailBody(),
+			PublishedAt: time.Unix(rand.Int64N(time.Now().Unix()), 0),
+		}
+	}
 
 	for _, impl := range impls() {
 		b.Run(fmt.Sprintf("%T", impl), func(b *testing.B) {
@@ -55,12 +73,10 @@ func BenchmarkInsertArticles(b *testing.B) {
 					for pb.Next() {
 						articles := make([]*Article, 10)
 						for i := range articles {
-							articles[i] = &Article{
-								ID:          atomic.AddInt64(&next, 1),
-								Title:       fake.Title(),
-								Body:        fake.EmailBody(),
-								PublishedAt: time.Unix(rand.Int63n(time.Now().Unix()), 0),
-							}
+							id := atomic.AddInt64(&next, 1)
+							a := pool[id%poolSize]
+							a.ID = id
+							articles[i] = &a
 						}
 						impl.InsertArticles(articles)
 					}
@@ -88,7 +104,7 @@ func BenchmarkFindAuthorByID(b *testing.B) {
 
 				b.RunParallel(func(pb *testing.PB) {
 					for pb.Next() {
-						impl.FindAuthorByID(rand.Int63n(n) + 1)
+						impl.FindAuthorByID(rand.Int64N(n) + 1)
 					}
 				})
 			})
@@ -106,7 +122,7 @@ func BenchmarkFindAuthorByName(b *testing.B) {
 	n := int64(10000)
 	authors := make([]*Author, n)
 	for i := range authors {
-		authors[i] = &Author{ID: int64(i + 1), Name: authorNames[rand.Intn(len(authorNames))]}
+		authors[i] = &Author{ID: int64(i + 1), Name: authorNames[rand.IntN(len(authorNames))]}
 	}
 
 	for _, impl := range impls() {
@@ -116,9 +132,11 @@ func BenchmarkFindAuthorByName(b *testing.B) {
 				b.ReportAllocs()
 				b.ResetTimer()
 
-				for i := 0; i < b.N; i++ {
-					impl.FindAuthorsByName(authorNames[i%len(authorNames)])
-				}
+				b.RunParallel(func(pb *testing.PB) {
+					for pb.Next() {
+						impl.FindAuthorsByName(authorNames[rand.IntN(len(authorNames))])
+					}
+				})
 			})
 		})
 	}
@@ -133,7 +151,7 @@ func BenchmarkRecentArticles(b *testing.B) {
 			ID:          int64(i + 1),
 			Title:       fake.Title(),
 			Body:        fake.EmailBody(),
-			PublishedAt: time.Unix(rand.Int63n(time.Now().Unix()), 0),
+			PublishedAt: time.Unix(rand.Int64N(time.Now().Unix()), 0),
 		}
 	}
 	for _, impl := range impls() {
@@ -152,10 +170,6 @@ func BenchmarkRecentArticles(b *testing.B) {
 	}
 
 	fmt.Println()
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
 }
 
 func impls() []Implementation {
