@@ -5,14 +5,14 @@
 package sqlc
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 type Article struct {
 	ID          int64
 	Title       string
 	Body        string
-	PublishedAt pgtype.Timestamptz
+	PublishedAt time.Time
 }
 
 type Author struct {

@@ -245,7 +245,12 @@ func implTest(t *testing.T, impl Implementation) {
 			})
 			assert.NoError(t, err)
 
-			actual, err := json.Marshal(impl.RecentArticles(2))
+			// Compare instants: drivers may return times in UTC rather than time.Local.
+			recent := impl.RecentArticles(2)
+			for _, a := range recent {
+				a.PublishedAt = a.PublishedAt.In(time.Local)
+			}
+			actual, err := json.Marshal(recent)
 			assert.NoError(t, err)
 
 			assert.Equal(t, string(expected), string(actual))

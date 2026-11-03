@@ -7,8 +7,7 @@ package sqlc
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 const findAuthorByID = `-- name: FindAuthorByID :one
@@ -55,7 +54,7 @@ type InsertArticlesParams struct {
 	ID          int64
 	Title       string
 	Body        string
-	PublishedAt pgtype.Timestamptz
+	PublishedAt time.Time
 }
 
 type InsertAuthorsParams struct {
