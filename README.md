@@ -20,7 +20,7 @@ supports.
 go test ./...
 
 # Run benchmarks, summarized with benchstat
-go test -run '^$' -bench . -benchmem -count 3 . | tee bench.txt
+go test -run '^$' -bench . -benchmem -count 6 . | tee bench.txt
 go run golang.org/x/perf/cmd/benchstat@latest bench.txt
 
 # Reset if cleanup was not performed by previous run
