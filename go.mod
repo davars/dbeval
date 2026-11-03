@@ -8,7 +8,7 @@ require (
 	github.com/go-pg/pg/v10 v10.15.1
 	github.com/gocraft/dbr/v2 v2.7.7
 	github.com/icrowley/fake v0.0.0-20240710202011-f797eb4a99c0
-	github.com/jackc/pgx/v5 v5.11.0
+	github.com/jackc/pgx/v5 v5.12.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.12.3
 	github.com/stretchr/testify v1.12.1
