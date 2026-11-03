@@ -33,4 +33,7 @@ jobs:
         run: go build ./...
 
       - name: Test
+        # A non-UTC zone, so time zone handling bugs that UTC would hide (wrong instants stored or read) show up.
+        env:
+          TZ: America/Los_Angeles
         run: go test -v ./...

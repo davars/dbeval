@@ -36,16 +36,25 @@ func (g *Gorm) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 	sqlDB.SetMaxOpenConns(openConns)
 }
 
+// execRaw runs harness DDL on the underlying *sql.DB: with PrepareStmt enabled, gorm would try to prepare the
+// multi-statement schema, which postgres rejects.
+func (g *Gorm) execRaw(query string) {
+	sqlDB, err := g.db.DB()
+	check(err)
+	_, err = sqlDB.Exec(query)
+	check(err)
+}
+
 func (g *Gorm) CreateDatabase() {
-	check(g.db.Exec(createdb).Error)
+	g.execRaw(createdb)
 }
 
 func (g *Gorm) DropDatabase() {
-	check(g.db.Exec(dropdb).Error)
+	g.execRaw(dropdb)
 }
 
 func (g *Gorm) CreateSchema() {
-	check(g.db.Exec(schema).Error)
+	g.execRaw(schema)
 }
 
 func (g *Gorm) InsertAuthors(as []*Author) {

@@ -2,7 +2,6 @@ package dbeval
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -64,7 +63,7 @@ func (p *SQLC) InsertArticles(as []*Article) {
 		insert[i].ID = a.ID
 		insert[i].Body = a.Body
 		insert[i].Title = a.Title
-		check((&insert[i].PublishedAt).Scan(a.PublishedAt))
+		insert[i].PublishedAt = a.PublishedAt
 	}
 
 	_, err := p.q.InsertArticles(context.Background(), insert)
@@ -98,14 +97,11 @@ func (p *SQLC) RecentArticles(n int) []*Article {
 	check(err)
 	ret := make([]*Article, len(as))
 	for i, a := range as {
-		if !a.PublishedAt.Valid {
-			check(fmt.Errorf("invalid PublishedAt"))
-		}
 		ret[i] = &Article{
 			ID:          a.ID,
 			Body:        a.Body,
 			Title:       a.Title,
-			PublishedAt: a.PublishedAt.Time,
+			PublishedAt: a.PublishedAt,
 		}
 	}
 	return ret
