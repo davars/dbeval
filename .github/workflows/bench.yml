@@ -4,8 +4,8 @@ name: Benchmarks
 # and on demand from the Actions tab.
 #
 # GitHub-hosted runners are shared VMs, so absolute numbers drift from run to run; compare implementations within
-# one results.txt rather than across commits. Each benchmark runs several times and benchstat reports the median
-# with its variation.
+# one results.txt rather than across commits. Each benchmark runs six times (the minimum for benchstat to report a
+# confidence interval) and benchstat reports the median with its variation.
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
 
       - name: Run benchmarks
         shell: bash # -o pipefail, so a failing benchmark isn't masked by tee
-        run: go test -run '^$' -bench . -benchmem -count 3 -timeout 0 ./ | tee bench.txt
+        run: go test -run '^$' -bench . -benchmem -count 6 -timeout 0 ./ | tee bench.txt
 
       - name: Summarize with benchstat
         run: |

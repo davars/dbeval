@@ -10,6 +10,11 @@ import (
 // Notes:
 // - trivial to insert multiple records with a single statement
 
+// dbr interpolates arguments into the SQL text itself, so pgx's default statement cache can never hit for
+// parameter-varying queries: each distinct query would cost an extra round trip to prepare. The simple protocol sends
+// each query in one round trip, at the cost of text rather than binary result decoding on large reads.
+const dbrPGXParams = " default_query_exec_mode=simple_protocol"
+
 type DBR struct {
 	db *dbr.Session
 }
@@ -19,7 +24,7 @@ func (p *DBR) Connect(ds string, connLifetime time.Duration, idleConns, openConn
 		p.db.Close()
 		p.db = nil
 	}
-	conn, err := dbr.Open("pgx", ds, nil)
+	conn, err := dbr.Open("pgx", ds+dbrPGXParams, nil)
 	check(err)
 	conn.SetConnMaxLifetime(connLifetime)
 	conn.SetMaxIdleConns(idleConns)

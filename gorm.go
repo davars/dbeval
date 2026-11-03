@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // Notes:
@@ -27,6 +28,9 @@ func (g *Gorm) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 	g.db, err = gorm.Open(postgres.Open(ds), &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
+		// The default logger reports queries over 200ms, which only the benchmarks' setup inserts reach; it would
+		// print each 10,000-row INSERT in full.
+		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	check(err)
 	sqlDB, err := g.db.DB()
