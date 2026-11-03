@@ -4,7 +4,7 @@ go 1.27.2
 
 require (
 	entgo.io/ent v0.14.6
-	github.com/go-ozzo/ozzo-dbx v1.6.0
+	github.com/go-ozzo/ozzo-dbx v1.7.0
 	github.com/go-pg/pg/v10 v10.15.1
 	github.com/gocraft/dbr/v2 v2.7.7
 	github.com/icrowley/fake v0.0.0-20240710202011-f797eb4a99c0

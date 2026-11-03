@@ -41,8 +41,8 @@ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vb
 github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG1KdI/P7A=
 github.com/go-openapi/inflect v1.0.1 h1:gqN2BW4CxqueOg9FO861a592OZKBNJ7GV1XE+gDI1DU=
 github.com/go-openapi/inflect v1.0.1/go.mod h1:lxYFcPUUAw+O6UXnm1tPRgWDTLnH/Rwz4xdKInO0ccA=
-github.com/go-ozzo/ozzo-dbx v1.6.0 h1:UKA9UBQkPpec7esEa1C73szjn3HnewdVpdEtvHHyfE8=
-github.com/go-ozzo/ozzo-dbx v1.6.0/go.mod h1:Xqc5cGAAfr7hR7u25PY8IGG0CEJoMZrndpSQfsIgVBM=
+github.com/go-ozzo/ozzo-dbx v1.7.0 h1:sqv3OunlwVv2YHCaD8wxLUcYov0LX891oYYprVWkRRA=
+github.com/go-ozzo/ozzo-dbx v1.7.0/go.mod h1:Xqc5cGAAfr7hR7u25PY8IGG0CEJoMZrndpSQfsIgVBM=
 github.com/go-pg/pg/v10 v10.15.1 h1:qN+QWSvwPqrYQc/vtWnR5i4q4VEqcKSSiq5zCP8F/mY=
 github.com/go-pg/pg/v10 v10.15.1/go.mod h1:e1RwkVVhVn8Du7i08yUSqFanW65GA0dKYzP1wghWlcU=
 github.com/go-pg/zerochecker v0.2.0 h1:pp7f72c3DobMWOb2ErtZsnrPaSvHd2W4o9//8HtF4mU=
