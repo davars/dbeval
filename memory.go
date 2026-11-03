@@ -71,20 +71,29 @@ func (m *Memory) FindAuthorsByName(name string) []*Author {
 
 func (m *Memory) RecentArticles(n int) []*Article {
 	m.RLock()
-	if m.unsorted {
-		m.RUnlock()
-		m.Lock()
-		if m.unsorted {
-			slices.SortStableFunc(m.articlesByDate, func(a, b *Article) int {
-				return b.PublishedAt.Compare(a.PublishedAt)
-			})
-			m.unsorted = false
-		}
-		m.Unlock()
-		m.RLock()
+	if !m.unsorted {
+		defer m.RUnlock()
+		return m.recentArticles(n)
 	}
-	defer m.RUnlock()
-	return m.articlesByDate[:min(n, len(m.articlesByDate))]
+	m.RUnlock()
+
+	// Sort and select under the write lock, so an insert can't slip in between and leave the result unsorted.
+	m.Lock()
+	defer m.Unlock()
+	if m.unsorted {
+		slices.SortStableFunc(m.articlesByDate, func(a, b *Article) int {
+			return b.PublishedAt.Compare(a.PublishedAt)
+		})
+		m.unsorted = false
+	}
+	return m.recentArticles(n)
+}
+
+// recentArticles returns a copy of the n newest articles: a later sort reorders articlesByDate in place, which would
+// otherwise change a slice already returned to a caller.  Callers must hold the lock, and articlesByDate must be
+// sorted.
+func (m *Memory) recentArticles(n int) []*Article {
+	return slices.Clone(m.articlesByDate[:min(n, len(m.articlesByDate))])
 }
 
 var _ Implementation = &Memory{}
