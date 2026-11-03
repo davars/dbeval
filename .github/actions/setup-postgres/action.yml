@@ -1,0 +1,24 @@
+name: Start local PostgreSQL
+description: >
+  Starts the PostgreSQL server preinstalled on GitHub-hosted Ubuntu runners and gives the runner user a
+  trust-authenticated superuser role.
+
+runs:
+  using: composite
+  steps:
+    # The implementations under test (see e.g. bun.go) connect as the local OS user against a local instance, per
+    # the README, so give that user a trust-authenticated superuser role rather than standing up a separate
+    # password-authenticated service container.
+    - shell: bash
+      run: |
+        sudo systemctl start postgresql.service
+        sudo -u postgres createuser --superuser "$USER"
+        sudo -u postgres psql -c "ALTER ROLE \"$USER\" WITH PASSWORD NULL;"
+
+        hba_file=$(sudo -u postgres psql -tAc "SHOW hba_file;")
+        sudo sed -i \
+          -e 's/^\(local\s\+all\s\+all\s\+\)peer/\1trust/' \
+          -e 's/^\(host\s\+all\s\+all\s\+127\.0\.0\.1\/32\s\+\)scram-sha-256/\1trust/' \
+          -e 's/^\(host\s\+all\s\+all\s\+::1\/128\s\+\)scram-sha-256/\1trust/' \
+          "$hba_file"
+        sudo systemctl restart postgresql.service

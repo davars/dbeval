@@ -13,7 +13,7 @@ import (
 )
 
 // Notes:
-// - trivial to insert multiple records with a single statement
+// - trivial to insert multiple records with a single statement, which is atomic on its own
 
 type Bun struct {
 	db *bun.DB
@@ -53,17 +53,13 @@ func (b *Bun) CreateSchema() {
 }
 
 func (b *Bun) InsertAuthors(as []*Author) {
-	check(b.db.RunInTx(context.Background(), nil, func(ctx context.Context, tx bun.Tx) error {
-		_, err := tx.NewInsert().Model(&as).Exec(ctx)
-		return err
-	}))
+	_, err := b.db.NewInsert().Model(&as).Exec(context.Background())
+	check(err)
 }
 
 func (b *Bun) InsertArticles(as []*Article) {
-	check(b.db.RunInTx(context.Background(), nil, func(ctx context.Context, tx bun.Tx) error {
-		_, err := tx.NewInsert().Model(&as).Exec(ctx)
-		return err
-	}))
+	_, err := b.db.NewInsert().Model(&as).Exec(context.Background())
+	check(err)
 }
 
 func (b *Bun) FindAuthorByID(id int64) *Author {

@@ -3,14 +3,14 @@ package dbeval
 import (
 	"context"
 	"database/sql"
-	"entgo.io/ent/dialect"
-	"github.com/davars/dbeval/ent/article"
-	"github.com/davars/dbeval/ent/author"
 	"time"
 
-	"github.com/davars/dbeval/ent"
-
+	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+
+	"github.com/davars/dbeval/ent"
+	"github.com/davars/dbeval/ent/article"
+	"github.com/davars/dbeval/ent/author"
 )
 
 type Ent struct {
@@ -25,10 +25,10 @@ func (e *Ent) Connect(ds string, connLifetime time.Duration, idleConns, openConn
 	}
 	var err error
 	e.db, err = sql.Open("pgx", ds)
+	check(err)
 	e.db.SetConnMaxLifetime(connLifetime)
 	e.db.SetMaxIdleConns(idleConns)
 	e.db.SetMaxOpenConns(openConns)
-	check(err)
 
 	drv := entsql.OpenDB(dialect.Postgres, e.db)
 	e.client = ent.NewClient(ent.Driver(drv))
@@ -44,8 +44,11 @@ func (e *Ent) DropDatabase() {
 	check(err)
 }
 
+// CreateSchema uses the shared schema.sql rather than e.client.Schema.Create so that ent runs against the same
+// UNLOGGED tables as every other implementation; ent's migrations would create logged tables, which are slower to
+// write to.
 func (e *Ent) CreateSchema() {
-	err := e.client.Schema.Create(context.Background())
+	_, err := e.db.Exec(schema)
 	check(err)
 }
 

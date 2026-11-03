@@ -28,6 +28,7 @@ func (p *SQLC) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 	cc.MinConns = int32(idleConns)
 	cc.MaxConns = int32(openConns)
 	p.db, err = pgxpool.NewWithConfig(context.Background(), cc)
+	check(err)
 	p.q = sqlc.New(p.db)
 }
 
@@ -53,18 +54,7 @@ func (p *SQLC) InsertAuthors(as []*Author) {
 		insert[i].Name = a.Name
 	}
 
-	ctx := context.Background()
-	tx, err := p.db.Begin(ctx)
-	defer func() {
-		if err == nil {
-			check(tx.Commit(ctx))
-		} else {
-			check(tx.Rollback(ctx))
-		}
-	}()
-	check(err)
-
-	_, err = p.q.WithTx(tx).InsertAuthors(context.Background(), insert)
+	_, err := p.q.InsertAuthors(context.Background(), insert)
 	check(err)
 }
 
@@ -77,18 +67,7 @@ func (p *SQLC) InsertArticles(as []*Article) {
 		check((&insert[i].PublishedAt).Scan(a.PublishedAt))
 	}
 
-	ctx := context.Background()
-	tx, err := p.db.Begin(ctx)
-	defer func() {
-		if err == nil {
-			check(tx.Commit(ctx))
-		} else {
-			check(tx.Rollback(ctx))
-		}
-	}()
-	check(err)
-
-	_, err = p.q.WithTx(tx).InsertArticles(context.Background(), insert)
+	_, err := p.q.InsertArticles(context.Background(), insert)
 	check(err)
 }
 

@@ -7,6 +7,9 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Notes:
+// - NamedExec with a slice expands into a single multi-row INSERT, which is atomic on its own
+
 type SQLX struct {
 	db *sqlx.DB
 }
@@ -18,10 +21,10 @@ func (p *SQLX) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 	}
 	var err error
 	p.db, err = sqlx.Open("pgx", ds)
+	check(err)
 	p.db.SetConnMaxLifetime(connLifetime)
 	p.db.SetMaxIdleConns(idleConns)
 	p.db.SetMaxOpenConns(openConns)
-	check(err)
 }
 
 func (p *SQLX) CreateDatabase() {
@@ -40,70 +43,30 @@ func (p *SQLX) CreateSchema() {
 }
 
 func (p *SQLX) InsertAuthors(as []*Author) {
-	tx, err := p.db.Beginx()
-	defer func() {
-		if err == nil {
-			check(tx.Commit())
-		} else {
-			check(tx.Rollback())
-		}
-	}()
+	_, err := p.db.NamedExec(`INSERT INTO authors (id, name) VALUES (:id, :name)`, as)
 	check(err)
-	for _, a := range as {
-		_, err = tx.NamedExec(`INSERT INTO authors (id, name) VALUES (:id, :name)`, a)
-		check(err)
-	}
 }
 
 func (p *SQLX) InsertArticles(as []*Article) {
-	tx, err := p.db.Beginx()
-	defer func() {
-		if err == nil {
-			check(tx.Commit())
-		} else {
-			check(tx.Rollback())
-		}
-	}()
+	_, err := p.db.NamedExec(`INSERT INTO articles (id, title, body, published_at) VALUES (:id, :title, :body, :published_at)`, as)
 	check(err)
-	for _, a := range as {
-		_, err = tx.NamedExec(`INSERT INTO articles (id, title, body, published_at) VALUES (:id, :title, :body, :published_at)`, a)
-		check(err)
-	}
 }
 
 func (p *SQLX) FindAuthorByID(id int64) *Author {
 	a := &Author{}
-	check(p.db.QueryRowx(`SELECT id, name FROM authors WHERE id = $1`, id).StructScan(a))
+	check(p.db.Get(a, `SELECT id, name FROM authors WHERE id = $1`, id))
 	return a
 }
 
 func (p *SQLX) FindAuthorsByName(name string) []*Author {
 	var as []*Author
-	rows, err := p.db.Queryx(`SELECT id, name FROM authors WHERE name = $1`, name)
-	check(err)
-	defer rows.Close()
-	for rows.Next() {
-		a := &Author{}
-		err = rows.StructScan(a)
-		check(err)
-		as = append(as, a)
-	}
-	check(rows.Err())
+	check(p.db.Select(&as, `SELECT id, name FROM authors WHERE name = $1`, name))
 	return as
 }
 
 func (p *SQLX) RecentArticles(n int) []*Article {
 	var as []*Article
-	rows, err := p.db.Queryx(`SELECT id, title, body, published_at FROM articles ORDER BY published_at DESC LIMIT $1`, n)
-	check(err)
-	defer rows.Close()
-	for rows.Next() {
-		a := &Article{}
-		err = rows.StructScan(a)
-		check(err)
-		as = append(as, a)
-	}
-	check(rows.Err())
+	check(p.db.Select(&as, `SELECT id, title, body, published_at FROM articles ORDER BY published_at DESC LIMIT $1`, n))
 	return as
 }
 

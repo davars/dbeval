@@ -50,7 +50,7 @@ func (p *Ozzo) CreateSchema() {
 func (p *Ozzo) InsertAuthors(as []*Author) {
 	err := p.db.Transactional(func(tx *dbx.Tx) error {
 		for _, a := range as {
-			err := p.db.Model(a).Insert()
+			err := tx.Model(a).Insert()
 			if err != nil {
 				return err
 			}
@@ -63,7 +63,7 @@ func (p *Ozzo) InsertAuthors(as []*Author) {
 func (p *Ozzo) InsertArticles(as []*Article) {
 	err := p.db.Transactional(func(tx *dbx.Tx) error {
 		for _, a := range as {
-			err := p.db.Model(a).Insert()
+			err := tx.Model(a).Insert()
 			if err != nil {
 				return err
 			}
