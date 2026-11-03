@@ -9,6 +9,8 @@ import (
 
 // Notes:
 // - can't use zero value as primary key
+// - Create with a slice issues a single multi-row INSERT
+// - SkipDefaultTransaction and PrepareStmt are the settings gorm's performance guide recommends
 
 type Gorm struct {
 	db *gorm.DB
@@ -22,7 +24,10 @@ func (g *Gorm) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 		g.db = nil
 	}
 	var err error
-	g.db, err = gorm.Open(postgres.Open(ds), &gorm.Config{})
+	g.db, err = gorm.Open(postgres.Open(ds), &gorm.Config{
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
+	})
 	check(err)
 	sqlDB, err := g.db.DB()
 	check(err)
@@ -44,40 +49,16 @@ func (g *Gorm) CreateSchema() {
 }
 
 func (g *Gorm) InsertAuthors(as []*Author) {
-	db := g.db.Begin()
-	var err error
-	defer func() {
-		if err == nil {
-			check(db.Commit().Error)
-		} else {
-			check(db.Rollback().Error)
-		}
-	}()
-	for _, a := range as {
-		err = db.Create(a).Error
-		check(err)
-	}
+	check(g.db.Create(&as).Error)
 }
 
 func (g *Gorm) InsertArticles(as []*Article) {
-	db := g.db.Begin()
-	var err error
-	defer func() {
-		if err == nil {
-			check(db.Commit().Error)
-		} else {
-			check(db.Rollback().Error)
-		}
-	}()
-	for _, a := range as {
-		err = db.Create(a).Error
-		check(err)
-	}
+	check(g.db.Create(&as).Error)
 }
 
 func (g *Gorm) FindAuthorByID(id int64) *Author {
 	a := &Author{}
-	check(g.db.Where("id = ?", id).First(a).Error)
+	check(g.db.First(a, id).Error)
 	return a
 }
 

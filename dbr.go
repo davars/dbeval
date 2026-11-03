@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/gocraft/dbr/v2"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 // Notes:
 // - trivial to insert multiple records with a single statement
-// - inserts tz-ignorant times into tz-aware columns
 
 type DBR struct {
 	db *dbr.Session
@@ -19,7 +19,7 @@ func (p *DBR) Connect(ds string, connLifetime time.Duration, idleConns, openConn
 		p.db.Close()
 		p.db = nil
 	}
-	conn, err := dbr.Open("postgres", ds, nil)
+	conn, err := dbr.Open("pgx", ds, nil)
 	check(err)
 	conn.SetConnMaxLifetime(connLifetime)
 	conn.SetMaxIdleConns(idleConns)
@@ -43,38 +43,26 @@ func (p *DBR) CreateSchema() {
 }
 
 func (p *DBR) InsertAuthors(as []*Author) {
-	tx, err := p.db.Begin()
-	check(err)
-	defer tx.RollbackUnlessCommitted()
-	ib := tx.InsertInto("authors").Columns("id", "name")
+	ib := p.db.InsertInto("authors").Columns("id", "name")
 	for _, a := range as {
 		ib.Record(a)
 	}
-	_, err = ib.Exec()
+	_, err := ib.Exec()
 	check(err)
-	check(tx.Commit())
 }
 
 func (p *DBR) InsertArticles(as []*Article) {
-	tx, err := p.db.Begin()
-	check(err)
-	defer tx.RollbackUnlessCommitted()
-	ib := tx.InsertInto("articles").Columns("id", "title", "body", "published_at")
+	ib := p.db.InsertInto("articles").Columns("id", "title", "body", "published_at")
 	for _, a := range as {
-		// bug in time encoding, drops tz on insert, so convert to local and insert as UTC.  PG will add back local tz,
-		// hopefully the same one as this program.
-		t := a.PublishedAt.Local()
-		a.PublishedAt = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.UTC)
 		ib.Record(a)
 	}
-	_, err = ib.Exec()
+	_, err := ib.Exec()
 	check(err)
-	check(tx.Commit())
 }
 
 func (p *DBR) FindAuthorByID(id int64) *Author {
 	a := &Author{}
-	check(p.db.Select("*").From("authors").Where("id = ? ", id).LoadOne(a))
+	check(p.db.Select("*").From("authors").Where("id = ?", id).LoadOne(a))
 	return a
 }
 

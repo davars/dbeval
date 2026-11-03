@@ -3,9 +3,12 @@ package dbeval
 import (
 	"time"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"xorm.io/xorm"
 )
+
+// Notes:
+// - Insert with a slice issues a single multi-row INSERT
 
 type Xorm struct {
 	db *xorm.Engine
@@ -17,11 +20,11 @@ func (x *Xorm) Connect(ds string, connLifetime time.Duration, idleConns, openCon
 		x.db = nil
 	}
 	var err error
-	x.db, err = xorm.NewEngine("postgres", ds)
+	x.db, err = xorm.NewEngine("pgx", ds)
+	check(err)
 	x.db.SetConnMaxLifetime(connLifetime)
 	x.db.SetMaxIdleConns(idleConns)
 	x.db.SetMaxOpenConns(openConns)
-	check(err)
 }
 
 func (x *Xorm) CreateDatabase() {
@@ -51,20 +54,23 @@ func (x *Xorm) InsertArticles(as []*Article) {
 
 func (x *Xorm) FindAuthorByID(id int64) *Author {
 	a := &Author{}
-	_, err := x.db.Table("authors").Where("id = ?", id).Get(a)
+	has, err := x.db.ID(id).Get(a)
 	check(err)
+	if !has {
+		panic("author not found")
+	}
 	return a
 }
 
 func (x *Xorm) FindAuthorsByName(name string) []*Author {
 	var as []*Author
-	check(x.db.Table("authors").Where("name = ?", name).Find(&as))
+	check(x.db.Where("name = ?", name).Find(&as))
 	return as
 }
 
 func (x *Xorm) RecentArticles(n int) []*Article {
 	var as []*Article
-	check(x.db.Table("articles").Desc("published_at").Limit(n).Find(&as))
+	check(x.db.Desc("published_at").Limit(n).Find(&as))
 	return as
 }
 

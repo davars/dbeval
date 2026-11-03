@@ -1,7 +1,6 @@
 package dbeval
 
 import (
-	"context"
 	"os"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 // - trivial to insert multiple records with a single statement
 // - treats zero value as DEFAULT rather than zero value 🤔
 // - found a bug in my schema (not null without default)
+// - in maintenance mode; its authors recommend bun (see Bun) for new code
 
 type GoPG struct {
 	db *pg.DB
@@ -51,17 +51,13 @@ func (g *GoPG) CreateSchema() {
 }
 
 func (g *GoPG) InsertAuthors(as []*Author) {
-	check(g.db.RunInTransaction(context.Background(), func(tx *pg.Tx) error {
-		_, err := tx.Model(&as).Insert()
-		return err
-	}))
+	_, err := g.db.Model(&as).Insert()
+	check(err)
 }
 
 func (g *GoPG) InsertArticles(as []*Article) {
-	check(g.db.RunInTransaction(context.Background(), func(tx *pg.Tx) error {
-		_, err := tx.Model(&as).Insert()
-		return err
-	}))
+	_, err := g.db.Model(&as).Insert()
+	check(err)
 }
 
 func (g *GoPG) FindAuthorByID(id int64) *Author {

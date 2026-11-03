@@ -1,10 +1,12 @@
 package dbeval
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 )
 
 type PGXStdlib struct {
@@ -18,10 +20,10 @@ func (p *PGXStdlib) Connect(ds string, connLifetime time.Duration, idleConns, op
 	}
 	var err error
 	p.db, err = sql.Open("pgx", ds)
+	check(err)
 	p.db.SetConnMaxLifetime(connLifetime)
 	p.db.SetMaxIdleConns(idleConns)
 	p.db.SetMaxOpenConns(openConns)
-	check(err)
 }
 
 func (p *PGXStdlib) CreateDatabase() {
@@ -39,36 +41,29 @@ func (p *PGXStdlib) CreateSchema() {
 	check(err)
 }
 
-func (p *PGXStdlib) InsertAuthors(as []*Author) {
-	tx, err := p.db.Begin()
-	defer func() {
-		if err == nil {
-			check(tx.Commit())
-		} else {
-			check(tx.Rollback())
-		}
-	}()
+// copyFrom borrows the underlying *pgx.Conn from the database/sql pool, the documented way to reach pgx-specific
+// features such as COPY through database/sql.
+func (p *PGXStdlib) copyFrom(table string, columns []string, src pgx.CopyFromSource) {
+	ctx := context.Background()
+	conn, err := p.db.Conn(ctx)
 	check(err)
-	for _, a := range as {
-		_, err = tx.Exec(`INSERT INTO authors (id, name) VALUES ($1, $2)`, a.ID, a.Name)
-		check(err)
-	}
+	defer conn.Close()
+	check(conn.Raw(func(driverConn any) error {
+		_, err := driverConn.(*stdlib.Conn).Conn().CopyFrom(ctx, pgx.Identifier{table}, columns, src)
+		return err
+	}))
+}
+
+func (p *PGXStdlib) InsertAuthors(as []*Author) {
+	p.copyFrom("authors", []string{"id", "name"}, pgx.CopyFromSlice(len(as), func(i int) ([]any, error) {
+		return []any{as[i].ID, as[i].Name}, nil
+	}))
 }
 
 func (p *PGXStdlib) InsertArticles(as []*Article) {
-	tx, err := p.db.Begin()
-	defer func() {
-		if err == nil {
-			check(tx.Commit())
-		} else {
-			check(tx.Rollback())
-		}
-	}()
-	check(err)
-	for _, a := range as {
-		_, err = tx.Exec(`INSERT INTO articles (id, title, body, published_at) VALUES ($1, $2, $3, $4)`, a.ID, a.Title, a.Body, a.PublishedAt)
-		check(err)
-	}
+	p.copyFrom("articles", []string{"id", "title", "body", "published_at"}, pgx.CopyFromSlice(len(as), func(i int) ([]any, error) {
+		return []any{as[i].ID, as[i].Title, as[i].Body, as[i].PublishedAt}, nil
+	}))
 }
 
 func (p *PGXStdlib) FindAuthorByID(id int64) *Author {

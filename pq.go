@@ -7,6 +7,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Notes:
+// - binary_parameters=yes lets pq send Parse/Bind/Execute in one round trip instead of preparing the statement
+//   first, roughly halving latency for parameterized queries
+// - bulk inserts use COPY, which pq exposes through a prepared statement inside a transaction
+
 type PQ struct {
 	db *sql.DB
 }
@@ -17,11 +22,11 @@ func (p *PQ) Connect(ds string, connLifetime time.Duration, idleConns, openConns
 		p.db = nil
 	}
 	var err error
-	p.db, err = sql.Open("postgres", ds)
+	p.db, err = sql.Open("postgres", ds+" binary_parameters=yes")
+	check(err)
 	p.db.SetConnMaxLifetime(connLifetime)
 	p.db.SetMaxIdleConns(idleConns)
 	p.db.SetMaxOpenConns(openConns)
-	check(err)
 }
 
 func (p *PQ) CreateDatabase() {
@@ -39,36 +44,33 @@ func (p *PQ) CreateSchema() {
 	check(err)
 }
 
-func (p *PQ) InsertAuthors(as []*Author) {
+// copyIn streams rows into the table with COPY FROM STDIN.
+func (p *PQ) copyIn(query string, n int, row func(i int) []any) {
 	tx, err := p.db.Begin()
-	defer func() {
-		if err == nil {
-			check(tx.Commit())
-		} else {
-			check(tx.Rollback())
-		}
-	}()
 	check(err)
-	for _, a := range as {
-		_, err = tx.Exec(`INSERT INTO authors (id, name) VALUES ($1, $2)`, a.ID, a.Name)
+	defer tx.Rollback()
+	stmt, err := tx.Prepare(query)
+	check(err)
+	for i := 0; i < n; i++ {
+		_, err = stmt.Exec(row(i)...)
 		check(err)
 	}
+	_, err = stmt.Exec() // flush
+	check(err)
+	check(stmt.Close())
+	check(tx.Commit())
+}
+
+func (p *PQ) InsertAuthors(as []*Author) {
+	p.copyIn(`COPY authors (id, name) FROM STDIN`, len(as), func(i int) []any {
+		return []any{as[i].ID, as[i].Name}
+	})
 }
 
 func (p *PQ) InsertArticles(as []*Article) {
-	tx, err := p.db.Begin()
-	defer func() {
-		if err == nil {
-			check(tx.Commit())
-		} else {
-			check(tx.Rollback())
-		}
-	}()
-	check(err)
-	for _, a := range as {
-		_, err = tx.Exec(`INSERT INTO articles (id, title, body, published_at) VALUES ($1, $2, $3, $4)`, a.ID, a.Title, a.Body, a.PublishedAt)
-		check(err)
-	}
+	p.copyIn(`COPY articles (id, title, body, published_at) FROM STDIN`, len(as), func(i int) []any {
+		return []any{as[i].ID, as[i].Title, as[i].Body, as[i].PublishedAt}
+	})
 }
 
 func (p *PQ) FindAuthorByID(id int64) *Author {
@@ -84,8 +86,7 @@ func (p *PQ) FindAuthorsByName(name string) []*Author {
 	defer rows.Close()
 	for rows.Next() {
 		a := &Author{}
-		err = rows.Scan(&a.ID, &a.Name)
-		check(err)
+		check(rows.Scan(&a.ID, &a.Name))
 		as = append(as, a)
 	}
 	check(rows.Err())
@@ -99,8 +100,7 @@ func (p *PQ) RecentArticles(n int) []*Article {
 	defer rows.Close()
 	for rows.Next() {
 		a := &Article{}
-		err = rows.Scan(&a.ID, &a.Title, &a.Body, &a.PublishedAt)
-		check(err)
+		check(rows.Scan(&a.ID, &a.Title, &a.Body, &a.PublishedAt))
 		as = append(as, a)
 	}
 	check(rows.Err())
