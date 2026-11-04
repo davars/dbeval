@@ -1,7 +1,7 @@
 name: Benchmarks
 
-# Regenerates results.md whenever the code or its dependencies change on main (including merged Dependabot PRs),
-# and on demand from the Actions tab.
+# Regenerates results.md and its chart, results.svg, whenever the code or its dependencies change on main (including
+# merged Dependabot PRs), and on demand from the Actions tab.
 #
 # GitHub-hosted runners are shared VMs, so absolute numbers drift from run to run; compare implementations within
 # one results.md rather than across commits. Each benchmark runs six times; internal/benchreport reports the median
@@ -45,18 +45,18 @@ jobs:
         shell: bash # -o pipefail, so a failing benchmark isn't masked by tee
         run: go test -run '^$' -bench . -benchmem -count 6 -timeout 0 ./ | tee bench.txt
 
-      - name: Write results.md
+      - name: Write results.md and results.svg
         run: |
-          go run ./internal/benchreport -commit "$GITHUB_SHA" -pg "$(psql -d postgres -tAc 'SHOW server_version;')" bench.txt > results.md
+          go run ./internal/benchreport -commit "$GITHUB_SHA" -svg results.svg -pg "$(psql -d postgres -tAc 'SHOW server_version;')" bench.txt > results.md
           cat results.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Commit results.md
+      - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898341+github-actions[bot]@users.noreply.github.com"
-          git add results.md
+          git add results.md results.svg
           if git diff --cached --quiet; then
-            echo "results.md unchanged"
+            echo "results unchanged"
             exit 0
           fi
           # [skip ci]: the results commit doesn't need tests, and doesn't touch any path that retriggers this workflow.

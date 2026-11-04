@@ -2,8 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/xml"
 	"fmt"
+	"io"
 	"math"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -52,7 +55,7 @@ func TestRowsSortedFastestFirstReferenceLast(t *testing.T) {
 
 func TestSummaryAveragesAcrossBenchmarks(t *testing.T) {
 	var buf bytes.Buffer
-	write(&buf, parsed(t), "0123456789abcdef", "16", time.Date(2026, 11, 3, 0, 0, 0, 0, time.UTC))
+	write(&buf, parsed(t), "0123456789abcdef", "16", "", time.Date(2026, 11, 3, 0, 0, 0, 0, time.UTC))
 	out := buf.String()
 
 	// Fast: 1.00× and 4.00× (geomean 2.00×); Slow: 2.73× and 1.00× (geomean 1.65×), so Slow ranks first. Their
@@ -63,6 +66,7 @@ func TestSummaryAveragesAcrossBenchmarks(t *testing.T) {
 		"| ref | Memory | 10.0ns | — | — | 0 B | 0 |",
 		"from commit `0123456`",
 		"CPU: Test CPU",
+		"from 4 goroutines at once",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
@@ -125,7 +129,7 @@ func TestCategories(t *testing.T) {
 		t.Fatal(err)
 	}
 	var buf bytes.Buffer
-	write(&buf, res, "", "", time.Now())
+	write(&buf, res, "", "", "", time.Now())
 	out := buf.String()
 	// A: reads 1.00×, writes 2.00×, overall 2^(2/5) = 1.32×; B: reads 2.00×, writes 1.00×, overall 2^(3/5) = 1.52×.
 	for _, want := range []string{
@@ -136,5 +140,66 @@ func TestCategories(t *testing.T) {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
 		}
+	}
+}
+
+func TestSVG(t *testing.T) {
+	res := parsed(t)
+	res.data["FindAuthorByID"]["A<B&C"] = &samples{ns: []float64{5000}}
+	var buf bytes.Buffer
+	writeSVG(&buf, res, summarize(res, res.benchmarks()), "0123456789abcdef", time.Date(2026, 11, 3, 0, 0, 0, 0, time.UTC))
+	out := buf.String()
+
+	// Well-formed XML, so names from the benchmark output can't break the markup.
+	d := xml.NewDecoder(strings.NewReader(out))
+	var names []string
+	inName := false
+	for {
+		tok, err := d.Token()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("invalid SVG: %v\n%s", err, out)
+		}
+		switch tok := tok.(type) {
+		case xml.StartElement:
+			inName = tok.Name.Local == "text" && slices.Contains(tok.Attr, xml.Attr{Name: xml.Name{Local: "class"}, Value: "name"})
+		case xml.CharData:
+			if inName {
+				names = append(names, string(tok))
+			}
+		case xml.EndElement:
+			inName = false
+		}
+	}
+	// Rows in Overall order (see TestSummaryAveragesAcrossBenchmarks), without the reference implementation, in the
+	// leaderboard and then the heatmap.
+	if got, want := strings.Join(names, " "), "Slow Fast A<B&C Slow Fast A<B&C"; got != want {
+		t.Errorf("rows = %q, want %q", got, want)
+	}
+	if !strings.Contains(out, "commit 0123456") {
+		t.Errorf("footer missing commit:\n%s", out)
+	}
+}
+
+func TestSplitName(t *testing.T) {
+	for in, want := range map[string]string{
+		"InsertAuthors":    "Insert/Authors",
+		"FindAuthorByName": "FindAuthor/ByName",
+		"FindAuthorByID":   "FindAuthor/ByID",
+		"Short":            "Short/",
+	} {
+		if a, b := splitName(in); a+"/"+b != want {
+			t.Errorf("splitName(%s) = %s/%s, want %s", in, a, b, want)
+		}
+	}
+}
+
+func TestReportShowsChart(t *testing.T) {
+	var buf bytes.Buffer
+	write(&buf, parsed(t), "", "", "results.svg", time.Now())
+	if !strings.Contains(buf.String(), "](results.svg)") {
+		t.Errorf("report doesn't show the chart:\n%s", buf.String())
 	}
 }

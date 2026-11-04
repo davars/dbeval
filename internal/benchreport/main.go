@@ -1,20 +1,23 @@
 // Command benchreport turns this repository's `go test -bench` output into a Markdown report: a summary ranking
 // each implementation by its time relative to the fastest implementation, averaged across all benchmarks, followed
-// by a table per benchmark sorted fastest first.
+// by a table per benchmark sorted fastest first. With -svg, it also draws the summary as a chart that the report
+// shows.
 //
 // Usage:
 //
 //	go test -run '^$' -bench . -benchmem -count 6 . | tee bench.txt
-//	go run ./internal/benchreport bench.txt > results.md
+//	go run ./internal/benchreport -svg results.svg bench.txt > results.md
 package main
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
 	"math"
 	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"slices"
@@ -48,7 +51,7 @@ var descriptions = map[string]string{
 }
 
 var (
-	resultRE = regexp.MustCompile(`^Benchmark([^/\s]+)/(\S+?)(?:-\d+)?\s+\d+\s+([\d.]+) ns/op(?:\s+([\d.]+) B/op)?(?:\s+([\d.]+) allocs/op)?`)
+	resultRE = regexp.MustCompile(`^Benchmark([^/\s]+)/(\S+?)(?:-(\d+))?\s+\d+\s+([\d.]+) ns/op(?:\s+([\d.]+) B/op)?(?:\s+([\d.]+) allocs/op)?`)
 	configRE = regexp.MustCompile(`^(goos|goarch|cpu|pkg):\s*(.*?)\s*$`)
 )
 
@@ -89,6 +92,10 @@ func (res *results) addLine(line string) {
 	}
 	bench := m[1]
 	impl := strings.TrimPrefix(strings.TrimPrefix(m[2], "*"), "dbeval.")
+	if m[3] != "" {
+		// The -N suffix is GOMAXPROCS, which is how many goroutines b.RunParallel calls the operation from.
+		res.config["procs"] = m[3]
+	}
 	if res.data[bench] == nil {
 		res.data[bench] = map[string]*samples{}
 	}
@@ -97,12 +104,12 @@ func (res *results) addLine(line string) {
 		s = &samples{}
 		res.data[bench][impl] = s
 	}
-	s.ns = append(s.ns, mustFloat(m[3]))
-	if m[4] != "" {
-		s.bytes = append(s.bytes, mustFloat(m[4]))
-	}
+	s.ns = append(s.ns, mustFloat(m[4]))
 	if m[5] != "" {
-		s.allocs = append(s.allocs, mustFloat(m[5]))
+		s.bytes = append(s.bytes, mustFloat(m[5]))
+	}
+	if m[6] != "" {
+		s.allocs = append(s.allocs, mustFloat(m[6]))
 	}
 }
 
@@ -303,14 +310,108 @@ func formatRelative(x float64) string {
 	return fmt.Sprintf("%.1f×", x)
 }
 
-func write(w io.Writer, res *results, commit, pg string, now time.Time) {
-	benches := res.benchmarks()
-	runs := 0
+// implSummary is one implementation's relative times per benchmark, and their averages across all benchmarks and per
+// category.
+type implSummary struct {
+	impl     string
+	relative map[string]estimate
+	overall  estimate
+	category map[string]estimate
+	catRank  map[string]string
+}
+
+// summary ranks implementations across benchmarks; it's shared by the Markdown report and the chart.
+type summary struct {
+	impls      []*implSummary // sorted by overall, fastest first
+	ranks      []string       // tie ranks of impls by overall
+	cats       []string       // categories whose benchmarks all ran, in categories order
+	catBenches map[string][]string
+}
+
+func summarize(res *results, benches []string) summary {
+	byImpl := map[string]*implSummary{}
 	for _, b := range benches {
-		for _, s := range res.data[b] {
-			runs = max(runs, len(s.ns))
+		for _, r := range res.rows(b) {
+			if r.isReference {
+				continue
+			}
+			s := byImpl[r.impl]
+			if s == nil {
+				s = &implSummary{impl: r.impl, relative: map[string]estimate{}, category: map[string]estimate{}, catRank: map[string]string{}}
+				byImpl[r.impl] = s
+			}
+			s.relative[b] = r.relative
 		}
 	}
+	var sums []*implSummary
+	for _, s := range byImpl {
+		var all []estimate
+		for _, b := range benches {
+			if e, ok := s.relative[b]; ok {
+				all = append(all, e)
+			}
+		}
+		s.overall = average(all)
+		sums = append(sums, s)
+	}
+	// Name order first, so equal averages sort the same way every run.
+	sort.Slice(sums, func(i, j int) bool { return sums[i].impl < sums[j].impl })
+
+	// Categories only apply when all their benchmarks ran.
+	var cats []string
+	catBenches := map[string][]string{}
+	for _, c := range categories {
+		if !slices.ContainsFunc(c.benches, func(b string) bool { return res.data[b] == nil }) {
+			cats = append(cats, c.name)
+			catBenches[c.name] = c.benches
+		}
+	}
+	for _, c := range cats {
+		for _, s := range sums {
+			var es []estimate
+			for _, b := range catBenches[c] {
+				if e, ok := s.relative[b]; ok {
+					es = append(es, e)
+				}
+			}
+			if len(es) > 0 {
+				s.category[c] = average(es)
+			}
+		}
+		byCat := slices.Clone(sums)
+		sort.SliceStable(byCat, func(i, j int) bool { return byCat[i].category[c].mid < byCat[j].category[c].mid })
+		var es []estimate
+		for _, s := range byCat {
+			es = append(es, s.category[c])
+		}
+		for i, rank := range tieRanks(es) {
+			byCat[i].catRank[c] = rank
+		}
+	}
+
+	sort.SliceStable(sums, func(i, j int) bool { return sums[i].overall.mid < sums[j].overall.mid })
+	var overall []estimate
+	for _, s := range sums {
+		overall = append(overall, s.overall)
+	}
+	return summary{impls: sums, ranks: tieRanks(overall), cats: cats, catBenches: catBenches}
+}
+
+// runs is the most runs any implementation had of any benchmark.
+func (res *results) runs() int {
+	n := 0
+	for _, b := range res.data {
+		for _, s := range b {
+			n = max(n, len(s.ns))
+		}
+	}
+	return n
+}
+
+// write writes the Markdown report. If chart isn't empty, the summary shows the image at that path.
+func write(w io.Writer, res *results, commit, pg, chart string, now time.Time) {
+	benches := res.benchmarks()
+	runs := res.runs()
 
 	fmt.Fprintln(w, "# Benchmark results")
 	fmt.Fprintln(w)
@@ -335,81 +436,14 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 	fmt.Fprintln(w, "compare implementations within this report rather than absolute numbers across reports.")
 	fmt.Fprintln(w)
 
-	// Summary: each implementation's relative time per benchmark, and averages across all benchmarks and per
-	// category.
-	type summary struct {
-		impl     string
-		relative map[string]estimate
-		overall  estimate
-		category map[string]estimate
-		catRank  map[string]string
-	}
-	byImpl := map[string]*summary{}
-	for _, b := range benches {
-		for _, r := range res.rows(b) {
-			if r.isReference {
-				continue
-			}
-			s := byImpl[r.impl]
-			if s == nil {
-				s = &summary{impl: r.impl, relative: map[string]estimate{}, category: map[string]estimate{}, catRank: map[string]string{}}
-				byImpl[r.impl] = s
-			}
-			s.relative[b] = r.relative
-		}
-	}
-	var sums []*summary
-	for _, s := range byImpl {
-		var all []estimate
-		for _, b := range benches {
-			if e, ok := s.relative[b]; ok {
-				all = append(all, e)
-			}
-		}
-		s.overall = average(all)
-		sums = append(sums, s)
-	}
-
-	// Categories only apply when all their benchmarks ran.
-	var cats []string
-	catBenches := map[string][]string{}
-	for _, c := range categories {
-		if !slices.ContainsFunc(c.benches, func(b string) bool { return res.data[b] == nil }) {
-			cats = append(cats, c.name)
-			catBenches[c.name] = c.benches
-		}
-	}
-	for _, c := range cats {
-		for _, s := range sums {
-			var es []estimate
-			for _, b := range catBenches[c] {
-				if e, ok := s.relative[b]; ok {
-					es = append(es, e)
-				}
-			}
-			if len(es) > 0 {
-				s.category[c] = average(es)
-			}
-		}
-		sort.Slice(sums, func(i, j int) bool { return sums[i].category[c].mid < sums[j].category[c].mid })
-		var es []estimate
-		for _, s := range sums {
-			es = append(es, s.category[c])
-		}
-		for i, rank := range tieRanks(es) {
-			sums[i].catRank[c] = rank
-		}
-	}
-
-	sort.Slice(sums, func(i, j int) bool { return sums[i].overall.mid < sums[j].overall.mid })
-	var overall []estimate
-	for _, s := range sums {
-		overall = append(overall, s.overall)
-	}
-	ranks := tieRanks(overall)
+	sum := summarize(res, benches)
+	sums, ranks, cats, catBenches := sum.impls, sum.ranks, sum.cats, sum.catBenches
 
 	fmt.Fprintln(w, "## Summary")
 	fmt.Fprintln(w)
+	if chart != "" {
+		fmt.Fprintf(w, "![Leaderboard: each implementation's Overall, Reads and Writes time relative to the fastest, with the range of runs](%s)\n\n", chart)
+	}
 	fmt.Fprintf(w, "Implementations are ranked by **Overall**: the geometric mean of their per-benchmark **×** values, so each\n")
 	fmt.Fprintf(w, "of the %d benchmarks counts equally however long it takes.", len(benches))
 	if len(cats) > 0 {
@@ -429,10 +463,17 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 	fmt.Fprintln(w, "in its group, so these runs can't tell them apart. An average's range runs from the average of each")
 	fmt.Fprintln(w, "benchmark's fastest run to the average of each benchmark's slowest.")
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, "What this measures: time only (memory and allocations are in the per-benchmark tables), as end-to-end")
-	fmt.Fprintln(w, "latency against a PostgreSQL server on the same machine. Server work is included, so where it dominates (the")
-	fmt.Fprintln(w, "inserts) differences in library overhead look smaller, and a remote database would add weight to round")
-	fmt.Fprintln(w, "trips. Each implementation runs with the driver, protocol and bulk-insert method chosen in its source file.")
+	goroutines := "GOMAXPROCS"
+	if p := res.config["procs"]; p != "" {
+		goroutines = p
+	}
+	fmt.Fprintln(w, "What this measures: time only (memory and allocations are in the per-benchmark tables). Each benchmark")
+	fmt.Fprintf(w, "calls its operation from %s goroutines at once (`b.RunParallel`), so Time/op is elapsed time divided by\n", goroutines)
+	fmt.Fprintln(w, "operations completed: the inverse of throughput under concurrent load, not the latency of one call.")
+	fmt.Fprintln(w, "Connection pooling and contention count, and calls go to a PostgreSQL server on the same machine. Server")
+	fmt.Fprintln(w, "work is included, so where it dominates (the inserts) differences in library overhead look smaller, and a")
+	fmt.Fprintln(w, "remote database would add weight to round trips. Each implementation runs with the driver, protocol and")
+	fmt.Fprintln(w, "bulk-insert method chosen in its source file.")
 	fmt.Fprintln(w)
 	fmt.Fprint(w, "| # | Implementation | **Overall** |")
 	for _, c := range cats {
@@ -506,8 +547,9 @@ func write(w io.Writer, res *results, commit, pg string, now time.Time) {
 func main() {
 	commit := flag.String("commit", "", "commit the benchmarks ran on")
 	pg := flag.String("pg", "", "PostgreSQL server version")
+	svg := flag.String("svg", "", "also write a leaderboard chart to this `file`, and show it in the report (the report links to the path as given, so make it relative to where the report will live)")
 	flag.Usage = func() {
-		fmt.Fprintln(flag.CommandLine.Output(), "usage: benchreport [-commit sha] [-pg version] [bench.txt ...]")
+		fmt.Fprintln(flag.CommandLine.Output(), "usage: benchreport [-commit sha] [-pg version] [-svg file] [bench.txt ...]")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
@@ -536,5 +578,14 @@ func main() {
 		fmt.Fprintln(os.Stderr, "benchreport: no benchmark results found")
 		os.Exit(1)
 	}
-	write(os.Stdout, res, *commit, *pg, time.Now())
+	now := time.Now()
+	if *svg != "" {
+		var buf bytes.Buffer
+		writeSVG(&buf, res, summarize(res, res.benchmarks()), *commit, now)
+		if err := os.WriteFile(*svg, buf.Bytes(), 0o644); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	}
+	write(os.Stdout, res, *commit, *pg, filepath.ToSlash(*svg), now)
 }
