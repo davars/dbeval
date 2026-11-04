@@ -1,0 +1,374 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="838" height="1262" viewBox="0 0 838 1262" role="img" aria-labelledby="t d">
+<title id="t">Benchmark leaderboard and per-benchmark scores</title>
+<desc id="d">Overall ranking, fastest first: =1 PGX 1.05×; =1 SQLC 1.08×; 3 PGXStdlib 1.14×; 4 SQLX 1.22×; =5 Ent 1.46×; =5 GoPG 1.47×; 7 Gorm 1.50×; 8 UpperDB 1.55×; 9 BunPGX 1.61×; 10 Bun 1.76×; =11 Xorm 1.82×; =11 DBR 1.87×; 13 PQ 1.94×; 14 Ozzo 2.43×.</desc>
+<style>
+svg { --surface: #fcfcfb; --rule: #d6d5cf; --rule-strong: #8a8984; --grid: #e6e5e0; --one: #b9b8b2;
+      --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #6f6e69; --series: #2a78d6; }
+@media (prefers-color-scheme: dark) {
+  svg { --surface: #1a1a19; --rule: #383835; --rule-strong: #77766f; --grid: #2a2a28; --one: #4a4a47;
+        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a9991; --series: #3987e5; }
+}
+text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--text-primary); }
+.bg { fill: var(--surface); }
+.rule { stroke: var(--rule); stroke-width: 1; }
+.rule-strong { stroke: var(--rule-strong); stroke-width: 1; }
+.grid { stroke: var(--grid); stroke-width: 1; }
+.one { stroke: var(--one); stroke-width: 1; }
+.whisker { stroke: var(--series); stroke-width: 2; stroke-linecap: round; }
+.dot { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
+.title { font-size: 20px; font-weight: 600; }
+.fig { font-size: 16px; font-weight: 600; }
+.sub { font-size: 12.5px; fill: var(--text-secondary); }
+.col { font-size: 10.5px; fill: var(--text-muted); letter-spacing: 0.08em; }
+.tick { font-size: 11px; fill: var(--text-muted); }
+.rank { font-size: 12.5px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+.name { font-size: 13px; font-weight: 600; }
+.overall { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.value { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.ord { font-size: 11px; fill: var(--text-muted); }
+.bench { font-size: 12px; font-weight: 600; }
+.fastest { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+.cell { font-size: 12px; font-variant-numeric: tabular-nums; }
+.foot { font-size: 11px; fill: var(--text-muted); }
+.h0 rect { fill: #cde2fb; } .h0 text { fill: #0b0b0b; }
+.h1 rect { fill: #b7d3f6; } .h1 text { fill: #0b0b0b; }
+.h2 rect { fill: #9ec5f4; } .h2 text { fill: #0b0b0b; }
+.h3 rect { fill: #86b6ef; } .h3 text { fill: #0b0b0b; }
+.h4 rect { fill: #6da7ec; } .h4 text { fill: #0b0b0b; }
+.h5 rect { fill: #5598e7; } .h5 text { fill: #0b0b0b; }
+.h6 rect { fill: #3987e5; } .h6 text { fill: #0b0b0b; }
+.h7 rect { fill: #2a78d6; } .h7 text { fill: #ffffff; }
+.h8 rect { fill: #256abf; } .h8 text { fill: #ffffff; }
+.h9 rect { fill: #1c5cab; } .h9 text { fill: #ffffff; }
+.h10 rect { fill: #184f95; } .h10 text { fill: #ffffff; }
+.h11 rect { fill: #104281; } .h11 text { fill: #ffffff; }
+.h12 rect { fill: #0d366b; } .h12 text { fill: #ffffff; }
+@media (prefers-color-scheme: dark) {
+  .h0 rect { fill: #0d366b; } .h0 text { fill: #ffffff; }
+  .h1 rect { fill: #104281; } .h1 text { fill: #ffffff; }
+  .h2 rect { fill: #184f95; } .h2 text { fill: #ffffff; }
+  .h3 rect { fill: #1c5cab; } .h3 text { fill: #ffffff; }
+  .h4 rect { fill: #256abf; } .h4 text { fill: #ffffff; }
+  .h5 rect { fill: #2a78d6; } .h5 text { fill: #ffffff; }
+  .h6 rect { fill: #3987e5; } .h6 text { fill: #0b0b0b; }
+  .h7 rect { fill: #5598e7; } .h7 text { fill: #0b0b0b; }
+  .h8 rect { fill: #6da7ec; } .h8 text { fill: #0b0b0b; }
+  .h9 rect { fill: #86b6ef; } .h9 text { fill: #0b0b0b; }
+  .h10 rect { fill: #9ec5f4; } .h10 text { fill: #0b0b0b; }
+  .h11 rect { fill: #b7d3f6; } .h11 text { fill: #0b0b0b; }
+  .h12 rect { fill: #cde2fb; } .h12 text { fill: #0b0b0b; }
+}
+</style>
+<rect class="bg" width="838" height="1262" rx="8"/>
+<text class="title" x="28" y="46">Go libraries for PostgreSQL</text>
+<text class="sub" x="28" y="72">14 libraries run the same 5 operations against a local PostgreSQL server, 6 runs each.</text>
+<text class="sub" x="28" y="90">A score is time relative to the fastest library on that benchmark: 1.00× is fastest, 2.00× takes twice as long.</text>
+<text class="fig" x="28" y="130">Leaderboard</text>
+<text class="sub" x="28" y="152">Overall is the geometric mean of the per-benchmark scores (dot). The line spans the range of runs, averaged</text>
+<text class="sub" x="28" y="169">the same way. Rules separate ties: rows in a group have runs that overlap the group&#39;s first row. Log scale.</text>
+<text class="col" x="28" y="204">RANK</text>
+<text class="col" x="68" y="204">LIBRARY</text>
+<text class="col" x="202" y="204" text-anchor="end">OVERALL</text>
+<text class="col" x="638" y="204" text-anchor="end">READS</text>
+<text class="col" x="748" y="204" text-anchor="end">WRITES</text>
+<text class="tick" x="240.9" y="204" text-anchor="middle">1×</text>
+<text class="tick" x="319.8" y="204" text-anchor="middle">1.25×</text>
+<text class="tick" x="384.3" y="204" text-anchor="middle">1.5×</text>
+<text class="tick" x="486.0" y="204" text-anchor="middle">2×</text>
+<text class="tick" x="565.0" y="204" text-anchor="middle">2.5×</text>
+<line class="one" x1="240.9" x2="240.9" y1="214" y2="606"/>
+<line class="grid" x1="319.8" x2="319.8" y1="214" y2="606"/>
+<line class="grid" x1="384.3" x2="384.3" y1="214" y2="606"/>
+<line class="grid" x1="486.0" x2="486.0" y1="214" y2="606"/>
+<line class="grid" x1="565.0" x2="565.0" y1="214" y2="606"/>
+<line class="rule-strong" x1="28" x2="810" y1="214" y2="214"/>
+<g><title>PGX: Overall 1.05×, range 1.02×–1.08×, rank =1</title>
+<text class="rank" x="28" y="228.0" dominant-baseline="central">=1</text>
+<text class="name" x="68" y="228.0" dominant-baseline="central">PGX</text>
+<text class="overall" x="202" y="228.0" dominant-baseline="central" text-anchor="end">1.05×</text>
+<line class="whisker" x1="246.8" x2="267.5" y1="228.0" y2="228.0"/>
+<circle class="dot" cx="256.7" cy="228.0" r="5"/>
+<text class="value" x="638" y="228.0" dominant-baseline="central" text-anchor="end">1.00×</text>
+<text class="ord" x="644" y="228.0" dominant-baseline="central">1st</text>
+<text class="value" x="748" y="228.0" dominant-baseline="central" text-anchor="end">1.12×</text>
+<text class="ord" x="754" y="228.0" dominant-baseline="central">=3rd</text>
+</g>
+<g><title>SQLC: Overall 1.08×, range 1.05×–1.13×, rank =1</title>
+<text class="rank" x="28" y="256.0" dominant-baseline="central">=1</text>
+<text class="name" x="68" y="256.0" dominant-baseline="central">SQLC</text>
+<text class="overall" x="202" y="256.0" dominant-baseline="central" text-anchor="end">1.08×</text>
+<line class="whisker" x1="258.3" x2="282.5" y1="256.0" y2="256.0"/>
+<circle class="dot" cx="268.9" cy="256.0" r="5"/>
+<text class="value" x="638" y="256.0" dominant-baseline="central" text-anchor="end">1.07×</text>
+<text class="ord" x="644" y="256.0" dominant-baseline="central">2nd</text>
+<text class="value" x="748" y="256.0" dominant-baseline="central" text-anchor="end">1.10×</text>
+<text class="ord" x="754" y="256.0" dominant-baseline="central">=3rd</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="270" y2="270"/>
+<g><title>PGXStdlib: Overall 1.14×, range 1.12×–1.15×, rank 3</title>
+<text class="rank" x="28" y="284.0" dominant-baseline="central">3</text>
+<text class="name" x="68" y="284.0" dominant-baseline="central">PGXStdlib</text>
+<text class="overall" x="202" y="284.0" dominant-baseline="central" text-anchor="end">1.14×</text>
+<line class="whisker" x1="281.9" x2="290.7" y1="284.0" y2="284.0"/>
+<circle class="dot" cx="286.1" cy="284.0" r="5"/>
+<text class="value" x="638" y="284.0" dominant-baseline="central" text-anchor="end">1.21×</text>
+<text class="ord" x="644" y="284.0" dominant-baseline="central">3rd</text>
+<text class="value" x="748" y="284.0" dominant-baseline="central" text-anchor="end">1.03×</text>
+<text class="ord" x="754" y="284.0" dominant-baseline="central">=1st</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="298" y2="298"/>
+<g><title>SQLX: Overall 1.22×, range 1.20×–1.24×, rank 4</title>
+<text class="rank" x="28" y="312.0" dominant-baseline="central">4</text>
+<text class="name" x="68" y="312.0" dominant-baseline="central">SQLX</text>
+<text class="overall" x="202" y="312.0" dominant-baseline="central" text-anchor="end">1.22×</text>
+<line class="whisker" x1="305.6" x2="316.1" y1="312.0" y2="312.0"/>
+<circle class="dot" cx="310.6" cy="312.0" r="5"/>
+<text class="value" x="638" y="312.0" dominant-baseline="central" text-anchor="end">1.37×</text>
+<text class="ord" x="644" y="312.0" dominant-baseline="central">4th</text>
+<text class="value" x="748" y="312.0" dominant-baseline="central" text-anchor="end">1.02×</text>
+<text class="ord" x="754" y="312.0" dominant-baseline="central">=1st</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="326" y2="326"/>
+<g><title>Ent: Overall 1.46×, range 1.44×–1.47×, rank =5</title>
+<text class="rank" x="28" y="340.0" dominant-baseline="central">=5</text>
+<text class="name" x="68" y="340.0" dominant-baseline="central">Ent</text>
+<text class="overall" x="202" y="340.0" dominant-baseline="central" text-anchor="end">1.46×</text>
+<line class="whisker" x1="370.3" x2="377.8" y1="340.0" y2="340.0"/>
+<circle class="dot" cx="374.0" cy="340.0" r="5"/>
+<text class="value" x="638" y="340.0" dominant-baseline="central" text-anchor="end">1.57×</text>
+<text class="ord" x="644" y="340.0" dominant-baseline="central">6th</text>
+<text class="value" x="748" y="340.0" dominant-baseline="central" text-anchor="end">1.30×</text>
+<text class="ord" x="754" y="340.0" dominant-baseline="central">=9th</text>
+</g>
+<g><title>GoPG: Overall 1.47×, range 1.45×–1.53×, rank =5</title>
+<text class="rank" x="28" y="368.0" dominant-baseline="central">=5</text>
+<text class="name" x="68" y="368.0" dominant-baseline="central">GoPG</text>
+<text class="overall" x="202" y="368.0" dominant-baseline="central" text-anchor="end">1.47×</text>
+<line class="whisker" x1="371.5" x2="391.0" y1="368.0" y2="368.0"/>
+<circle class="dot" cx="376.5" cy="368.0" r="5"/>
+<text class="value" x="638" y="368.0" dominant-baseline="central" text-anchor="end">1.62×</text>
+<text class="ord" x="644" y="368.0" dominant-baseline="central">7th</text>
+<text class="value" x="748" y="368.0" dominant-baseline="central" text-anchor="end">1.26×</text>
+<text class="ord" x="754" y="368.0" dominant-baseline="central">=7th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="382" y2="382"/>
+<g><title>Gorm: Overall 1.50×, range 1.48×–1.52×, rank 7</title>
+<text class="rank" x="28" y="396.0" dominant-baseline="central">7</text>
+<text class="name" x="68" y="396.0" dominant-baseline="central">Gorm</text>
+<text class="overall" x="202" y="396.0" dominant-baseline="central" text-anchor="end">1.50×</text>
+<line class="whisker" x1="379.6" x2="388.2" y1="396.0" y2="396.0"/>
+<circle class="dot" cx="383.1" cy="396.0" r="5"/>
+<text class="value" x="638" y="396.0" dominant-baseline="central" text-anchor="end">1.71×</text>
+<text class="ord" x="644" y="396.0" dominant-baseline="central">=8th</text>
+<text class="value" x="748" y="396.0" dominant-baseline="central" text-anchor="end">1.22×</text>
+<text class="ord" x="754" y="396.0" dominant-baseline="central">=5th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="410" y2="410"/>
+<g><title>UpperDB: Overall 1.55×, range 1.54×–1.57×, rank 8</title>
+<text class="rank" x="28" y="424.0" dominant-baseline="central">8</text>
+<text class="name" x="68" y="424.0" dominant-baseline="central">UpperDB</text>
+<text class="overall" x="202" y="424.0" dominant-baseline="central" text-anchor="end">1.55×</text>
+<line class="whisker" x1="392.6" x2="401.3" y1="424.0" y2="424.0"/>
+<circle class="dot" cx="396.0" cy="424.0" r="5"/>
+<text class="value" x="638" y="424.0" dominant-baseline="central" text-anchor="end">1.85×</text>
+<text class="ord" x="644" y="424.0" dominant-baseline="central">=10th</text>
+<text class="value" x="748" y="424.0" dominant-baseline="central" text-anchor="end">1.19×</text>
+<text class="ord" x="754" y="424.0" dominant-baseline="central">=5th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="438" y2="438"/>
+<g><title>BunPGX: Overall 1.61×, range 1.59×–1.62×, rank 9</title>
+<text class="rank" x="28" y="452.0" dominant-baseline="central">9</text>
+<text class="name" x="68" y="452.0" dominant-baseline="central">BunPGX</text>
+<text class="overall" x="202" y="452.0" dominant-baseline="central" text-anchor="end">1.61×</text>
+<line class="whisker" x1="404.6" x2="410.9" y1="452.0" y2="452.0"/>
+<circle class="dot" cx="408.5" cy="452.0" r="5"/>
+<text class="value" x="638" y="452.0" dominant-baseline="central" text-anchor="end">1.89×</text>
+<text class="ord" x="644" y="452.0" dominant-baseline="central">=10th</text>
+<text class="value" x="748" y="452.0" dominant-baseline="central" text-anchor="end">1.26×</text>
+<text class="ord" x="754" y="452.0" dominant-baseline="central">=7th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="466" y2="466"/>
+<g><title>Bun: Overall 1.76×, range 1.73×–1.81×, rank 10</title>
+<text class="rank" x="28" y="480.0" dominant-baseline="central">10</text>
+<text class="name" x="68" y="480.0" dominant-baseline="central">Bun</text>
+<text class="overall" x="202" y="480.0" dominant-baseline="central" text-anchor="end">1.76×</text>
+<line class="whisker" x1="435.3" x2="450.7" y1="480.0" y2="480.0"/>
+<circle class="dot" cx="440.7" cy="480.0" r="5"/>
+<text class="value" x="638" y="480.0" dominant-baseline="central" text-anchor="end">2.15×</text>
+<text class="ord" x="644" y="480.0" dominant-baseline="central">=12th</text>
+<text class="value" x="748" y="480.0" dominant-baseline="central" text-anchor="end">1.30×</text>
+<text class="ord" x="754" y="480.0" dominant-baseline="central">=9th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="494" y2="494"/>
+<g><title>Xorm: Overall 1.82×, range 1.81×–1.87×, rank =11</title>
+<text class="rank" x="28" y="508.0" dominant-baseline="central">=11</text>
+<text class="name" x="68" y="508.0" dominant-baseline="central">Xorm</text>
+<text class="overall" x="202" y="508.0" dominant-baseline="central" text-anchor="end">1.82×</text>
+<line class="whisker" x1="450.9" x2="462.0" y1="508.0" y2="508.0"/>
+<circle class="dot" cx="453.5" cy="508.0" r="5"/>
+<text class="value" x="638" y="508.0" dominant-baseline="central" text-anchor="end">2.26×</text>
+<text class="ord" x="644" y="508.0" dominant-baseline="central">14th</text>
+<text class="value" x="748" y="508.0" dominant-baseline="central" text-anchor="end">1.32×</text>
+<text class="ord" x="754" y="508.0" dominant-baseline="central">11th</text>
+</g>
+<g><title>DBR: Overall 1.87×, range 1.83×–1.88×, rank =11</title>
+<text class="rank" x="28" y="536.0" dominant-baseline="central">=11</text>
+<text class="name" x="68" y="536.0" dominant-baseline="central">DBR</text>
+<text class="overall" x="202" y="536.0" dominant-baseline="central" text-anchor="end">1.87×</text>
+<line class="whisker" x1="455.0" x2="463.7" y1="536.0" y2="536.0"/>
+<circle class="dot" cx="461.7" cy="536.0" r="5"/>
+<text class="value" x="638" y="536.0" dominant-baseline="central" text-anchor="end">2.23×</text>
+<text class="ord" x="644" y="536.0" dominant-baseline="central">=12th</text>
+<text class="value" x="748" y="536.0" dominant-baseline="central" text-anchor="end">1.43×</text>
+<text class="ord" x="754" y="536.0" dominant-baseline="central">12th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="550" y2="550"/>
+<g><title>PQ: Overall 1.94×, range 1.92×–1.97×, rank 13</title>
+<text class="rank" x="28" y="564.0" dominant-baseline="central">13</text>
+<text class="name" x="68" y="564.0" dominant-baseline="central">PQ</text>
+<text class="overall" x="202" y="564.0" dominant-baseline="central" text-anchor="end">1.94×</text>
+<line class="whisker" x1="471.4" x2="480.3" y1="564.0" y2="564.0"/>
+<circle class="dot" cx="474.8" cy="564.0" r="5"/>
+<text class="value" x="638" y="564.0" dominant-baseline="central" text-anchor="end">1.76×</text>
+<text class="ord" x="644" y="564.0" dominant-baseline="central">=8th</text>
+<text class="value" x="748" y="564.0" dominant-baseline="central" text-anchor="end">2.24×</text>
+<text class="ord" x="754" y="564.0" dominant-baseline="central">13th</text>
+</g>
+<line class="rule" x1="28" x2="810" y1="578" y2="578"/>
+<g><title>Ozzo: Overall 2.43×, range 2.38×–2.46×, rank 14</title>
+<text class="rank" x="28" y="592.0" dominant-baseline="central">14</text>
+<text class="name" x="68" y="592.0" dominant-baseline="central">Ozzo</text>
+<text class="overall" x="202" y="592.0" dominant-baseline="central" text-anchor="end">2.43×</text>
+<line class="whisker" x1="547.6" x2="559.9" y1="592.0" y2="592.0"/>
+<circle class="dot" cx="554.4" cy="592.0" r="5"/>
+<text class="value" x="638" y="592.0" dominant-baseline="central" text-anchor="end">1.53×</text>
+<text class="ord" x="644" y="592.0" dominant-baseline="central">5th</text>
+<text class="value" x="748" y="592.0" dominant-baseline="central" text-anchor="end">4.85×</text>
+<text class="ord" x="754" y="592.0" dominant-baseline="central">14th</text>
+</g>
+<line class="rule-strong" x1="28" x2="810" y1="606" y2="606"/>
+<text class="fig" x="28" y="658">Where the time goes</text>
+<text class="sub" x="28" y="680">Each library&#39;s score on each benchmark: its median time relative to the fastest library&#39;s. The more a cell</text>
+<text class="sub" x="28" y="697">stands out from the background, the slower (key below, log scale). Under each benchmark is its fastest median.</text>
+<text class="col" x="221.8" y="732" text-anchor="middle">WRITES</text>
+<text class="bench" x="221.8" y="749" text-anchor="middle">Insert</text>
+<text class="bench" x="221.8" y="764" text-anchor="middle">Authors</text>
+<text class="fastest" x="221.8" y="780" text-anchor="middle">57.8µs</text>
+<text class="col" x="352.6" y="732" text-anchor="middle">WRITES</text>
+<text class="bench" x="352.6" y="749" text-anchor="middle">Insert</text>
+<text class="bench" x="352.6" y="764" text-anchor="middle">Articles</text>
+<text class="fastest" x="352.6" y="780" text-anchor="middle">85.9µs</text>
+<text class="col" x="483.4" y="732" text-anchor="middle">READS</text>
+<text class="bench" x="483.4" y="749" text-anchor="middle">FindAuthor</text>
+<text class="bench" x="483.4" y="764" text-anchor="middle">ByID</text>
+<text class="fastest" x="483.4" y="780" text-anchor="middle">23.4µs</text>
+<text class="col" x="614.2" y="732" text-anchor="middle">READS</text>
+<text class="bench" x="614.2" y="749" text-anchor="middle">FindAuthor</text>
+<text class="bench" x="614.2" y="764" text-anchor="middle">ByName</text>
+<text class="fastest" x="614.2" y="780" text-anchor="middle">230µs</text>
+<text class="col" x="745.0" y="732" text-anchor="middle">READS</text>
+<text class="bench" x="745.0" y="749" text-anchor="middle">Recent</text>
+<text class="bench" x="745.0" y="764" text-anchor="middle">Articles</text>
+<text class="fastest" x="745.0" y="780" text-anchor="middle">1.54ms</text>
+<text class="name" x="68" y="806.0" dominant-baseline="central">PGX</text>
+<g class="h1"><title>PGX · InsertAuthors: 1.14×</title><rect x="157.4" y="793.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="806.0" dominant-baseline="central" text-anchor="middle">1.14×</text></g>
+<g class="h1"><title>PGX · InsertArticles: 1.09×</title><rect x="288.2" y="793.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="806.0" dominant-baseline="central" text-anchor="middle">1.09×</text></g>
+<g class="h0"><title>PGX · FindAuthorByID: 1.00×</title><rect x="419.0" y="793.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="806.0" dominant-baseline="central" text-anchor="middle">1.00×</text></g>
+<g class="h0"><title>PGX · FindAuthorByName: 1.00×</title><rect x="549.8" y="793.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="806.0" dominant-baseline="central" text-anchor="middle">1.00×</text></g>
+<g class="h0"><title>PGX · RecentArticles: 1.00×</title><rect x="680.6" y="793.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="806.0" dominant-baseline="central" text-anchor="middle">1.00×</text></g>
+<text class="name" x="68" y="834.0" dominant-baseline="central">SQLC</text>
+<g class="h1"><title>SQLC · InsertAuthors: 1.16×</title><rect x="157.4" y="821.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="834.0" dominant-baseline="central" text-anchor="middle">1.16×</text></g>
+<g class="h0"><title>SQLC · InsertArticles: 1.05×</title><rect x="288.2" y="821.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="834.0" dominant-baseline="central" text-anchor="middle">1.05×</text></g>
+<g class="h0"><title>SQLC · FindAuthorByID: 1.02×</title><rect x="419.0" y="821.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="834.0" dominant-baseline="central" text-anchor="middle">1.02×</text></g>
+<g class="h1"><title>SQLC · FindAuthorByName: 1.11×</title><rect x="549.8" y="821.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="834.0" dominant-baseline="central" text-anchor="middle">1.11×</text></g>
+<g class="h1"><title>SQLC · RecentArticles: 1.08×</title><rect x="680.6" y="821.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="834.0" dominant-baseline="central" text-anchor="middle">1.08×</text></g>
+<text class="name" x="68" y="862.0" dominant-baseline="central">PGXStdlib</text>
+<g class="h0"><title>PGXStdlib · InsertAuthors: 1.06×</title><rect x="157.4" y="849.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="862.0" dominant-baseline="central" text-anchor="middle">1.06×</text></g>
+<g class="h0"><title>PGXStdlib · InsertArticles: 1.00×</title><rect x="288.2" y="849.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="862.0" dominant-baseline="central" text-anchor="middle">1.00×</text></g>
+<g class="h0"><title>PGXStdlib · FindAuthorByID: 1.00×</title><rect x="419.0" y="849.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="862.0" dominant-baseline="central" text-anchor="middle">1.00×</text></g>
+<g class="h2"><title>PGXStdlib · FindAuthorByName: 1.39×</title><rect x="549.8" y="849.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="862.0" dominant-baseline="central" text-anchor="middle">1.39×</text></g>
+<g class="h2"><title>PGXStdlib · RecentArticles: 1.29×</title><rect x="680.6" y="849.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="862.0" dominant-baseline="central" text-anchor="middle">1.29×</text></g>
+<text class="name" x="68" y="890.0" dominant-baseline="central">SQLX</text>
+<g class="h0"><title>SQLX · InsertAuthors: 1.00×</title><rect x="157.4" y="877.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="890.0" dominant-baseline="central" text-anchor="middle">1.00×</text></g>
+<g class="h0"><title>SQLX · InsertArticles: 1.05×</title><rect x="288.2" y="877.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="890.0" dominant-baseline="central" text-anchor="middle">1.05×</text></g>
+<g class="h0"><title>SQLX · FindAuthorByID: 1.01×</title><rect x="419.0" y="877.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="890.0" dominant-baseline="central" text-anchor="middle">1.01×</text></g>
+<g class="h4"><title>SQLX · FindAuthorByName: 1.73×</title><rect x="549.8" y="877.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="890.0" dominant-baseline="central" text-anchor="middle">1.73×</text></g>
+<g class="h3"><title>SQLX · RecentArticles: 1.46×</title><rect x="680.6" y="877.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="890.0" dominant-baseline="central" text-anchor="middle">1.46×</text></g>
+<text class="name" x="68" y="918.0" dominant-baseline="central">Ent</text>
+<g class="h2"><title>Ent · InsertAuthors: 1.32×</title><rect x="157.4" y="905.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="918.0" dominant-baseline="central" text-anchor="middle">1.32×</text></g>
+<g class="h2"><title>Ent · InsertArticles: 1.28×</title><rect x="288.2" y="905.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="918.0" dominant-baseline="central" text-anchor="middle">1.28×</text></g>
+<g class="h2"><title>Ent · FindAuthorByID: 1.25×</title><rect x="419.0" y="905.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="918.0" dominant-baseline="central" text-anchor="middle">1.25×</text></g>
+<g class="h5"><title>Ent · FindAuthorByName: 1.94×</title><rect x="549.8" y="905.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="918.0" dominant-baseline="central" text-anchor="middle">1.94×</text></g>
+<g class="h3"><title>Ent · RecentArticles: 1.61×</title><rect x="680.6" y="905.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="918.0" dominant-baseline="central" text-anchor="middle">1.61×</text></g>
+<text class="name" x="68" y="946.0" dominant-baseline="central">GoPG</text>
+<g class="h1"><title>GoPG · InsertAuthors: 1.23×</title><rect x="157.4" y="933.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="946.0" dominant-baseline="central" text-anchor="middle">1.23×</text></g>
+<g class="h2"><title>GoPG · InsertArticles: 1.30×</title><rect x="288.2" y="933.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="946.0" dominant-baseline="central" text-anchor="middle">1.30×</text></g>
+<g class="h4"><title>GoPG · FindAuthorByID: 1.90×</title><rect x="419.0" y="933.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="946.0" dominant-baseline="central" text-anchor="middle">1.90×</text></g>
+<g class="h3"><title>GoPG · FindAuthorByName: 1.44×</title><rect x="549.8" y="933.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="946.0" dominant-baseline="central" text-anchor="middle">1.44×</text></g>
+<g class="h3"><title>GoPG · RecentArticles: 1.57×</title><rect x="680.6" y="933.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="946.0" dominant-baseline="central" text-anchor="middle">1.57×</text></g>
+<text class="name" x="68" y="974.0" dominant-baseline="central">Gorm</text>
+<g class="h1"><title>Gorm · InsertAuthors: 1.23×</title><rect x="157.4" y="961.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="974.0" dominant-baseline="central" text-anchor="middle">1.23×</text></g>
+<g class="h1"><title>Gorm · InsertArticles: 1.21×</title><rect x="288.2" y="961.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="974.0" dominant-baseline="central" text-anchor="middle">1.21×</text></g>
+<g class="h2"><title>Gorm · FindAuthorByID: 1.28×</title><rect x="419.0" y="961.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="974.0" dominant-baseline="central" text-anchor="middle">1.28×</text></g>
+<g class="h5"><title>Gorm · FindAuthorByName: 2.18×</title><rect x="549.8" y="961.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="974.0" dominant-baseline="central" text-anchor="middle">2.18×</text></g>
+<g class="h4"><title>Gorm · RecentArticles: 1.80×</title><rect x="680.6" y="961.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="974.0" dominant-baseline="central" text-anchor="middle">1.80×</text></g>
+<text class="name" x="68" y="1002.0" dominant-baseline="central">UpperDB</text>
+<g class="h1"><title>UpperDB · InsertAuthors: 1.17×</title><rect x="157.4" y="989.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1002.0" dominant-baseline="central" text-anchor="middle">1.17×</text></g>
+<g class="h1"><title>UpperDB · InsertArticles: 1.21×</title><rect x="288.2" y="989.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1002.0" dominant-baseline="central" text-anchor="middle">1.21×</text></g>
+<g class="h2"><title>UpperDB · FindAuthorByID: 1.29×</title><rect x="419.0" y="989.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1002.0" dominant-baseline="central" text-anchor="middle">1.29×</text></g>
+<g class="h6"><title>UpperDB · FindAuthorByName: 2.52×</title><rect x="549.8" y="989.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1002.0" dominant-baseline="central" text-anchor="middle">2.52×</text></g>
+<g class="h5"><title>UpperDB · RecentArticles: 1.95×</title><rect x="680.6" y="989.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1002.0" dominant-baseline="central" text-anchor="middle">1.95×</text></g>
+<text class="name" x="68" y="1030.0" dominant-baseline="central">BunPGX</text>
+<g class="h1"><title>BunPGX · InsertAuthors: 1.21×</title><rect x="157.4" y="1017.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1030.0" dominant-baseline="central" text-anchor="middle">1.21×</text></g>
+<g class="h2"><title>BunPGX · InsertArticles: 1.31×</title><rect x="288.2" y="1017.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1030.0" dominant-baseline="central" text-anchor="middle">1.31×</text></g>
+<g class="h4"><title>BunPGX · FindAuthorByID: 1.89×</title><rect x="419.0" y="1017.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1030.0" dominant-baseline="central" text-anchor="middle">1.89×</text></g>
+<g class="h5"><title>BunPGX · FindAuthorByName: 2.02×</title><rect x="549.8" y="1017.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1030.0" dominant-baseline="central" text-anchor="middle">2.02×</text></g>
+<g class="h4"><title>BunPGX · RecentArticles: 1.78×</title><rect x="680.6" y="1017.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1030.0" dominant-baseline="central" text-anchor="middle">1.78×</text></g>
+<text class="name" x="68" y="1058.0" dominant-baseline="central">Bun</text>
+<g class="h2"><title>Bun · InsertAuthors: 1.26×</title><rect x="157.4" y="1045.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1058.0" dominant-baseline="central" text-anchor="middle">1.26×</text></g>
+<g class="h2"><title>Bun · InsertArticles: 1.34×</title><rect x="288.2" y="1045.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1058.0" dominant-baseline="central" text-anchor="middle">1.34×</text></g>
+<g class="h5"><title>Bun · FindAuthorByID: 2.02×</title><rect x="419.0" y="1045.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1058.0" dominant-baseline="central" text-anchor="middle">2.02×</text></g>
+<g class="h6"><title>Bun · FindAuthorByName: 2.30×</title><rect x="549.8" y="1045.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1058.0" dominant-baseline="central" text-anchor="middle">2.30×</text></g>
+<g class="h5"><title>Bun · RecentArticles: 2.15×</title><rect x="680.6" y="1045.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1058.0" dominant-baseline="central" text-anchor="middle">2.15×</text></g>
+<text class="name" x="68" y="1086.0" dominant-baseline="central">Xorm</text>
+<g class="h1"><title>Xorm · InsertAuthors: 1.14×</title><rect x="157.4" y="1073.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1086.0" dominant-baseline="central" text-anchor="middle">1.14×</text></g>
+<g class="h3"><title>Xorm · InsertArticles: 1.53×</title><rect x="288.2" y="1073.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1086.0" dominant-baseline="central" text-anchor="middle">1.53×</text></g>
+<g class="h2"><title>Xorm · FindAuthorByID: 1.34×</title><rect x="419.0" y="1073.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1086.0" dominant-baseline="central" text-anchor="middle">1.34×</text></g>
+<g class="h8"><title>Xorm · FindAuthorByName: 3.24×</title><rect x="549.8" y="1073.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1086.0" dominant-baseline="central" text-anchor="middle">3.24×</text></g>
+<g class="h7"><title>Xorm · RecentArticles: 2.65×</title><rect x="680.6" y="1073.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1086.0" dominant-baseline="central" text-anchor="middle">2.65×</text></g>
+<text class="name" x="68" y="1114.0" dominant-baseline="central">DBR</text>
+<g class="h2"><title>DBR · InsertAuthors: 1.35×</title><rect x="157.4" y="1101.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1114.0" dominant-baseline="central" text-anchor="middle">1.35×</text></g>
+<g class="h3"><title>DBR · InsertArticles: 1.51×</title><rect x="288.2" y="1101.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1114.0" dominant-baseline="central" text-anchor="middle">1.51×</text></g>
+<g class="h4"><title>DBR · FindAuthorByID: 1.89×</title><rect x="419.0" y="1101.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1114.0" dominant-baseline="central" text-anchor="middle">1.89×</text></g>
+<g class="h6"><title>DBR · FindAuthorByName: 2.50×</title><rect x="549.8" y="1101.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1114.0" dominant-baseline="central" text-anchor="middle">2.50×</text></g>
+<g class="h6"><title>DBR · RecentArticles: 2.36×</title><rect x="680.6" y="1101.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1114.0" dominant-baseline="central" text-anchor="middle">2.36×</text></g>
+<text class="name" x="68" y="1142.0" dominant-baseline="central">PQ</text>
+<g class="h6"><title>PQ · InsertAuthors: 2.38×</title><rect x="157.4" y="1129.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1142.0" dominant-baseline="central" text-anchor="middle">2.38×</text></g>
+<g class="h5"><title>PQ · InsertArticles: 2.11×</title><rect x="288.2" y="1129.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1142.0" dominant-baseline="central" text-anchor="middle">2.11×</text></g>
+<g class="h5"><title>PQ · FindAuthorByID: 2.06×</title><rect x="419.0" y="1129.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1142.0" dominant-baseline="central" text-anchor="middle">2.06×</text></g>
+<g class="h2"><title>PQ · FindAuthorByName: 1.42×</title><rect x="549.8" y="1129.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1142.0" dominant-baseline="central" text-anchor="middle">1.42×</text></g>
+<g class="h4"><title>PQ · RecentArticles: 1.87×</title><rect x="680.6" y="1129.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1142.0" dominant-baseline="central" text-anchor="middle">1.87×</text></g>
+<text class="name" x="68" y="1170.0" dominant-baseline="central">Ozzo</text>
+<g class="h12"><title>Ozzo · InsertAuthors: 5.58×</title><rect x="157.4" y="1157.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="221.8" y="1170.0" dominant-baseline="central" text-anchor="middle">5.58×</text></g>
+<g class="h10"><title>Ozzo · InsertArticles: 4.22×</title><rect x="288.2" y="1157.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="352.6" y="1170.0" dominant-baseline="central" text-anchor="middle">4.22×</text></g>
+<g class="h1"><title>Ozzo · FindAuthorByID: 1.20×</title><rect x="419.0" y="1157.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="483.4" y="1170.0" dominant-baseline="central" text-anchor="middle">1.20×</text></g>
+<g class="h4"><title>Ozzo · FindAuthorByName: 1.88×</title><rect x="549.8" y="1157.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="614.2" y="1170.0" dominant-baseline="central" text-anchor="middle">1.88×</text></g>
+<g class="h3"><title>Ozzo · RecentArticles: 1.59×</title><rect x="680.6" y="1157.0" width="128.8" height="26.0" rx="3"/><text class="cell" x="745.0" y="1170.0" dominant-baseline="central" text-anchor="middle">1.59×</text></g>
+<text class="tick" x="150.4" y="1206.0" dominant-baseline="central" text-anchor="end">1.00×</text>
+<g class="h0"><rect x="156.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h1"><rect x="174.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h2"><rect x="192.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h3"><rect x="210.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h4"><rect x="228.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h5"><rect x="246.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h6"><rect x="264.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h7"><rect x="282.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h8"><rect x="300.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h9"><rect x="318.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h10"><rect x="336.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h11"><rect x="354.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<g class="h12"><rect x="372.4" y="1201.0" width="16" height="10" rx="2"/></g>
+<text class="tick" x="394.4" y="1206.0" dominant-baseline="central">5.58× (slowest shown)</text>
+<line class="rule" x1="28" x2="810" y1="1226" y2="1226"/>
+<text class="foot" x="28" y="1242">commit 8525f97 · 2026-11-04 · AMD EPYC 7763 64-Core Processor · 4 goroutines per benchmark · full tables in results.md</text>
+</svg>
